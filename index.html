@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>Little Space — Bookmarks</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23007aff'/%3E%3Ccircle cx='32' cy='32' r='12' fill='none' stroke='white' stroke-width='6'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@400;500;600;800&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Outfit:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Fraunces:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@400;500;600;800&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Outfit:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Fraunces:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>:root{--bg:#f2f2f7;--sf:#fff;--sf2:rgba(118,118,128,.12);--fill:rgba(118,118,128,.12);--fill2:rgba(118,118,128,.2);--tx:#1d1d1f;--mu:#86868b;--ac:#007aff;--on:#fff;--rd:#ff3b30;--bd:rgba(60,60,67,.14);--sep:rgba(60,60,67,.16);--sh:0 .5px 1px rgba(0,0,0,.12),0 2px 6px rgba(0,0,0,.08),0 8px 18px -6px rgba(0,0,0,.18);--tile:56px;--rad:22%;--fs:12px;--lc:2;--gap:16px;--sp:cubic-bezier(.34,1.56,.64,1);color-scheme:light}
 [data-t=dark]{--bg:#000;--sf:#1c1c1e;--sf2:rgba(118,118,128,.24);--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);--tx:#f5f5f7;--mu:#98989f;--rd:#ff453a;--bd:rgba(84,84,88,.5);--sep:rgba(84,84,88,.55);--sh:0 .5px 1px rgba(0,0,0,.6),0 3px 10px rgba(0,0,0,.5);color-scheme:dark}
 [hidden]{display:none!important}
@@ -1506,6 +1506,40 @@ button.ytpost-thumb{display:block;width:100%;padding:0;border:0;cursor:pointer;c
 
 /* ---- Saved card body: stay inside the card (width:100% plus side margins pushed video past the edge) ---- */
 .wl .wrow .wbody{width:auto;box-sizing:border-box}
+/* ---- speed: skip work for off-screen rows, isolate card layout ---- */
+.card{contain:layout style}
+.wl .wrow{content-visibility:auto;contain-intrinsic-size:auto 64px}
+.wl .wrow:not(.preview-collapsed){contain-intrinsic-size:auto 280px}
+/* ---- inline "… more" / "less" (no button) ---- */
+.xpost-text,.wl .xpost-text{display:block!important;-webkit-line-clamp:none!important;overflow:visible!important}
+.xmore{color:var(--pmu,var(--mu));cursor:pointer;white-space:nowrap;-webkit-user-select:none;user-select:none;font:inherit}
+.xmore:hover,.xmore:focus-visible{color:var(--tx)}
+/* ---- icon-only collapse/expand control ---- */
+body #tags .chip.wv{width:var(--ph);min-width:var(--ph);padding:0;gap:0;justify-content:center}
+body #tags .chip.wv span{display:none}
+.wl .wrow .wic .ic:not(:has(img)){font-size:18px}
+span.wic,span.wt{cursor:default}
+.wl .wtop{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.wdrag .wrow .wbody{display:none!important}
+.wl .wrow.lift{opacity:.35}
+.wgh{position:fixed;z-index:100;pointer-events:none;margin:0!important;max-width:none!important;transform:scale(1.03);filter:drop-shadow(0 16px 26px rgba(0,0,0,.28))}
+.wgh .wrow{display:block}
+.wl .wn.nt b::before{background:var(--ac)}
+.wn p a{color:var(--ac);text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
+/* ---- Saved rows: same card look as Bookmarks > Cards ---- */
+.wl{gap:calc(9px*var(--dens,1))!important}
+.wl .wrow,.wl .wrow.done{background:var(--sf)!important;border:1px solid var(--bd)!important;border-radius:18px!important;box-shadow:var(--sh)!important}
+.wl .wrow.done .wt{color:var(--mu)}
+.wl .wrow .wtop{gap:14px;min-height:0;padding:11px 6px 11px 13px}
+.wl .wrow .ic{width:52px;height:52px;border-radius:22%;font-size:20px;box-shadow:var(--ish)}
+.wl .wrow .wic .ic:not(:has(img)){font-size:24px}
+.wl .wrow .wt{font-size:clamp(14px,calc(var(--fs)*1.2),19px);font-weight:650;letter-spacing:-.02em}
+.wl .wrow .wh{font-size:clamp(11px,calc(var(--fs)*.92),15px);margin-top:3px}
+.wl .wrow .wpreview-toggle{background:none;color:var(--mu);width:34px;height:34px;min-width:34px;margin:0}
+.wl .wrow .wpreview-toggle:active,.wl .wrow .wmore:active{background:var(--fill)}
+.wl .wrow .wmore{color:var(--mu)}
+@media(hover:hover){.wl .wrow:hover{border-color:color-mix(in srgb,var(--ac) 32%,var(--bd))}}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 </head>
@@ -1555,8 +1589,10 @@ button.ytpost-thumb{display:block;width:100%;padding:0;border:0;cursor:pointer;c
 
 <dialog id="wdlg"><form id="wf" autocomplete="off">
  <h3 id="wdt">Add to Saved</h3>
- <label for="wu">Link</label><input id="wu" type="text" inputmode="url" autocapitalize="off" placeholder="example.com/article" required>
- <label for="wt">Title</label><input id="wt" maxlength="120" placeholder="Optional. Uses the website name if empty">
+ <label for="wu">Link (optional)</label><input id="wu" type="text" inputmode="url" autocapitalize="off" placeholder="example.com/article. Leave empty for a note">
+ <div id="wicw"><label>Icon for a note</label><div class="sg" id="wics"></div><input id="wie" maxlength="8" placeholder="Or type any emoji" style="margin-top:8px"></div>
+ <label for="wt">Title</label><input id="wt" maxlength="120" placeholder="Required for notes. Links use the website name">
+ <label for="wn">Note</label><textarea id="wn" maxlength="5000" rows="5" placeholder="Write anything. Paste links too, they become tappable."></textarea>
  <label for="ww">Why I saved it</label><textarea id="ww" maxlength="600" rows="3" placeholder="What caught my attention?"></textarea>
  <label for="wb">How it will help me</label><textarea id="wb" maxlength="600" rows="3" placeholder="What will I learn or do with it?"></textarea>
  <div class="err" id="werr" role="alert"></div>
@@ -1622,7 +1658,7 @@ button.ytpost-thumb{display:block;width:100%;padding:0;border:0;cursor:pointer;c
 <div class="f w2"><button type="button" class="btn" id="resetMotion">Reset motion</button></div>
 </div></div>
  <div class="apanel" data-t="tabs" role="tabpanel" hidden><div class="fg"><div class="f" data-seg><b>Tab style</b><select id="tabStyle"><option value="pills">Pills</option><option value="underline">Line</option><option value="minimal">Plain</option></select></div><div class="f" data-seg><b>Item counts</b><select id="tabCounts"><option value="show">Show</option><option value="hide">Hide</option></select></div><div class="f" data-seg><b>Open links in</b><select id="c-open"><option value="new">New tab</option><option value="same">Same tab</option></select></div><div class="f" data-seg><b>App opens on</b><select id="c-start"><option value="first">First tab</option><option value="last">Last used</option></select></div><div class="f"><b>Categories</b><button class="btn" id="tord" type="button">Reorder…</button></div></div></div>
- <div class="apanel" data-t="data" role="tabpanel" hidden><div class="fg"><div class="f w2"><button class="btn p" id="sync" type="button">Sync</button></div><div class="f"><button class="btn" id="conn" type="button">Database</button></div><div class="f"><button class="btn" id="imp" type="button">Import</button></div><div class="f"><button class="btn" id="exp" type="button">Export</button></div><div class="f"><button class="btn" id="resetAppearance" type="button">Reset appearance</button></div><p class="tip w2">Version 2.2 · build J</p></div></div>
+ <div class="apanel" data-t="data" role="tabpanel" hidden><div class="fg"><div class="f w2"><button class="btn p" id="sync" type="button">Sync</button></div><div class="f"><button class="btn" id="conn" type="button">Database</button></div><div class="f"><button class="btn" id="imp" type="button">Import</button></div><div class="f"><button class="btn" id="exp" type="button">Export</button></div><div class="f"><button class="btn" id="resetAppearance" type="button">Reset appearance</button></div><p class="tip w2">Version 2.4 · build L</p></div></div>
  <input type="file" id="file" accept=".json,.html,.htm,application/json,text/html" hidden>
 </dialog>
 
@@ -1665,7 +1701,7 @@ const C={url:localStorage.lp_url||"YOUR_SUPABASE_URL",key:localStorage.lp_key||"
 /* ================================================================================= */
 "use strict";
 /* ====== DATABASE SETUP: run this SQL once in Supabase (SQL Editor). Tables needed: lp_bookmarks, lp_settings, function lp_reorder. Safe to re-run. Also in Supabase: Authentication, Sign In / Providers, Email, turn OFF "Confirm email" (sync codes use hidden logins). ====== */
-const SQL=`-- Launchpad database setup. Safe to run more than once.
+const SQL=`-- Little Space: full setup. Safe to run more than once.
 create table if not exists public.lp_bookmarks (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
@@ -1681,34 +1717,48 @@ create table if not exists public.lp_bookmarks (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-alter table public.lp_bookmarks
-  add column if not exists tags text[] not null default '{}',
-  add column if not exists pinned boolean not null default false,
-  add column if not exists icon_url text,
-  add column if not exists emoji text,
-  add column if not exists position integer not null default 0,
-  add column if not exists open_count integer not null default 0,
-  add column if not exists last_opened_at timestamptz,
-  add column if not exists created_at timestamptz not null default now(),
-  add column if not exists updated_at timestamptz not null default now();
 create unique index if not exists lp_bookmarks_user_url on public.lp_bookmarks (user_id, url);
+create index if not exists lp_bookmarks_user_created on public.lp_bookmarks (user_id, created_at desc);
 
 create table if not exists public.lp_settings (
   user_id uuid primary key default auth.uid() references auth.users(id) on delete cascade,
   data jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now()
 );
-create unique index if not exists lp_settings_user on public.lp_settings (user_id);
+
+create table if not exists public.lp_watchlist (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  url text not null,
+  title text not null,
+  why text not null default '',
+  benefit text not null default '',
+  note text not null default '',
+  done boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.lp_watchlist add column if not exists note text not null default '';
+alter table public.lp_watchlist drop constraint if exists lp_watchlist_note_len;
+alter table public.lp_watchlist add constraint lp_watchlist_note_len check (char_length(note) <= 5000);
+create unique index if not exists lp_watchlist_user_url on public.lp_watchlist (user_id, url);
+create index if not exists lp_watchlist_user_created on public.lp_watchlist (user_id, created_at desc);
 
 alter table public.lp_bookmarks enable row level security;
 alter table public.lp_settings enable row level security;
+alter table public.lp_watchlist enable row level security;
 drop policy if exists "own bookmarks" on public.lp_bookmarks;
 create policy "own bookmarks" on public.lp_bookmarks for all to authenticated
   using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 drop policy if exists "own settings" on public.lp_settings;
 create policy "own settings" on public.lp_settings for all to authenticated
   using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-grant select, insert, update, delete on public.lp_bookmarks, public.lp_settings to authenticated;
+drop policy if exists "own watchlist" on public.lp_watchlist;
+create policy "own watchlist" on public.lp_watchlist for all to authenticated
+  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+
+revoke all on public.lp_bookmarks, public.lp_settings, public.lp_watchlist from anon, public;
+grant select, insert, update, delete on public.lp_bookmarks, public.lp_settings, public.lp_watchlist to authenticated;
 
 drop function if exists public.lp_reorder(uuid[]);
 create function public.lp_reorder(ids uuid[]) returns void
@@ -1717,24 +1767,9 @@ language sql security invoker set search_path = public as $$
   from unnest(ids) with ordinality as o(id, ord)
   where b.id = o.id and b.user_id = auth.uid();
 $$;
+revoke all on function public.lp_reorder(uuid[]) from public, anon;
 grant execute on function public.lp_reorder(uuid[]) to authenticated;
-create table if not exists public.lp_watchlist (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
-  url text not null,
-  title text not null,
-  why text not null default '',
-  benefit text not null default '',
-  done boolean not null default false,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-create unique index if not exists lp_watchlist_user_url on public.lp_watchlist (user_id, url);
-alter table public.lp_watchlist enable row level security;
-drop policy if exists "own watchlist" on public.lp_watchlist;
-create policy "own watchlist" on public.lp_watchlist for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-grant select, insert, update, delete on public.lp_watchlist to authenticated;
+
 notify pgrst, 'reload schema';`;
 const $=s=>document.querySelector(s),ls=localStorage;
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -1865,7 +1900,7 @@ async function commit(c){const ids=[...c.parentElement.children].map(k=>k.datase
 let ocT;function opened(id){const b=B.find(x=>x.id===id);if(!b)return;b.open_count=(b.open_count||0)+1;b.last_opened_at=new Date().toISOString();db(`lp_bookmarks?id=eq.${id}`,{m:"PATCH",b:{open_count:b.open_count,last_opened_at:b.last_opened_at},p:"return=minimal"}).catch(()=>{});clearTimeout(ocT);ocT=setTimeout(cache,2000)}
 $("#main").onclick=e=>{if(mode==="watch"){wClick(e);return}if(justDragged){e.preventDefault();return}if(sel){e.preventDefault();const c=e.target.closest(".card");if(c)tog(c.dataset.id);return}const ed=e.target.closest("[data-edit]");if(ed){e.preventDefault();menu(ed.dataset.edit,ed.closest(".card"));return}const c=e.target.closest(".card");if(c)opened(c.dataset.id)};
 $("#tags").onclick=e=>{if(e.target.closest("[data-wv]")){navigator.vibrate?.(8);setWView(wview()==="min"?"card":"min");return}const f=e.target.closest("[data-wf]");if(f){navigator.vibrate?.(8);wf=f.dataset.wf;draw();return}const t=e.target.closest("[data-tag]");if(t){navigator.vibrate?.(8);setTag(t.dataset.tag)}};
-let qt;$("#q").oninput=()=>{clearTimeout(qt);qt=setTimeout(draw,120)};
+let qt;$("#q").oninput=()=>{clearTimeout(qt);qt=setTimeout(draw,40)};
 
 /* ---- hold / right-click menu ---- */
 const mn=document.createElement("div");mn.id="mn";mn.hidden=true;mn.innerHTML='<div class="mnp"></div>';document.body.appendChild(mn);
@@ -1885,6 +1920,8 @@ function menu(id,el){const b=B.find(x=>x.id===id);if(!b)return;const p=mn.firstC
   else if(a==="pin"){const v=!b.pinned;b.pinned=v;cache();draw();try{await db(`lp_bookmarks?id=eq.${id}`,{m:"PATCH",b:{pinned:v},p:"return=minimal"})}catch(er){b.pinned=!v;cache();draw();toast(er.message)}}
   else if(a==="del"){if(!confirm("Delete this bookmark?"))return;try{await db(`lp_bookmarks?id=eq.${id}`,{m:"DELETE",p:"return=minimal"});B=B.filter(x=>x.id!==id);cache();draw();toast("Deleted")}catch(er){toast(er.message)}}}}
 /* ---- Watchlist: links to come back to, with notes on why and how they help ---- */
+const linkify=t=>esc(t).replace(/https?:\/\/(?:(?!&quot;|&#39;|&gt;)[^\s<])+/g,u=>{const m=u.match(/[.,;:!?)]+$/),tr=m?m[0]:"",c=tr?u.slice(0,-tr.length):u;return `<a href="${c}" target="_blank" rel="noopener noreferrer">${c}</a>${tr}`});
+const isNote=u=>{u=u||"";if(/^note:/.test(u))return true;try{const h=new URL(u).hostname;return !h.includes(".")&&!/^(localhost|\[.*|\d.*)$/.test(h)}catch{return false}};
 const WMSG="The Saved list needs a database update. Open Settings, Database, and copy the setup prompt.";
 const missingW=e=>/lp_watchlist|schema cache|does not exist|relation|\(404\)/i.test(e.message||"");
 const ago=t=>{const d=(Date.now()-new Date(t))/864e5;return d<1?"today":d<2?"yesterday":d<30?Math.floor(d)+" days ago":new Date(t).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})};
@@ -1892,14 +1929,16 @@ function modesUI(){$("#modes").dataset.m=mode;document.querySelectorAll("#modes 
 function setMode(m){if(m===mode)return;if(sel)selMode(false);mode=m;try{ls.lp_mode=m}catch{}$("#q").value="";swDir=m==="watch"?1:-1;anim=true;draw();scrollTo(0,0)}
 $("#modes").onclick=e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode)};
 async function loadW(manual){try{W=await db("lp_watchlist?select=*&order=created_at.desc");wErr=""}catch(e){wErr=missingW(e)?"setup":(navigator.onLine?e.message:"")}wBusy=false;cache();if(manual&&!wErr)toast("Saved list loaded");mode==="watch"?draw():modesUI()}
-function wvis(){const q=$("#q").value.trim().toLowerCase();return W.filter(w=>(wf==="all"||(wf==="todo"?!w.done:w.done))&&(!q||[w.title,w.url,w.why,w.benefit].some(x=>(x||"").toLowerCase().includes(q)))).sort((a,b)=>(a.done-b.done)||b.created_at.localeCompare(a.created_at))}
+function wOrd(){const ids=new Set(W.map(w=>w.id)),k=(cfg.word||[]).filter(id=>ids.has(id)),ks=new Set(k),fresh=W.filter(w=>!ks.has(w.id)).sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(w=>w.id);return[...fresh,...k]}
+function wMove(id,d){const v=wvis().map(w=>w.id),i=v.indexOf(id);if(i<0)return;const j=d==="top"?0:i+d;if(j<0||j>=v.length||j===i)return;const t=v[j],o=wOrd();o.splice(o.indexOf(id),1);const b=o.indexOf(t);o.splice(d==="top"||d<0?b:b+1,0,id);cfg.word=o;saveCfg();draw();toast(d==="top"?"Moved to top":d<0?"Moved up":"Moved down")}
+function wvis(){const ix=new Map(wOrd().map((id,i)=>[id,i])),q=$("#q").value.trim().toLowerCase();return W.filter(w=>(wf==="all"||(wf==="todo"?!w.done:w.done))&&(!q||[w.title,isNote(w.url)?"":w.url,w.note,w.why,w.benefit].some(x=>(x||"").toLowerCase().includes(q)))).sort((a,b)=>(a.done-b.done)||(ix.get(a.id)-ix.get(b.id)))}
 const wFlip=new Set();
 const wview=()=>cfg.wview==="min"?"min":"card";
 const wCol=id=>(wview()==="min")!==wFlip.has(id);
-const wvBtn=()=>{const m=wview()==="min",ic=m?'<path d="M7 8l5-4 5 4M7 16l5 4 5-4M4 12h16"/>':'<path d="M7 4l5 4 5-4M7 20l5-4 5 4M4 12h16"/>';return `<button class="chip wv" data-wv type="button" aria-label="${m?"Expand all cards":"Collapse all cards"}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><span>${m?"Expand all":"Collapse all"}</span></button>`};
+const wvBtn=()=>{const m=wview()==="min",ic=m?'<path d="M7 8l5-4 5 4M7 16l5 4 5-4M4 12h16"/>':'<path d="M7 4l5 4 5-4M7 20l5-4 5 4M4 12h16"/>';return `<button class="chip wv" data-wv type="button" title="${m?"Expand all":"Collapse all"}" aria-label="${m?"Expand all cards":"Collapse all cards"}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg></button>`};
 function setWView(v){cfg.wview=v==="min"?"min":"card";wFlip.clear();saveCfg();const s=document.getElementById("wView");if(s)s.value=cfg.wview;if(mode==="watch"){anim=true;swDir=0;draw()}}
 const CHV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>';
-function wrow(w,i){const u=esc(w.url),c=wCol(w.id);return `<article class="wrow${w.done?" done":""}${c?" preview-collapsed":""}" style="--i:${i}" data-id="${w.id}"><div class="wtop"><a class="wic" href="${u}" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">${icon({url:w.url,title:w.title})}</a><div class="wmeta"><a class="wt" href="${u}" target="_blank" rel="noopener noreferrer">${esc(w.title)}</a><div class="wh">${esc(host(w.url))} · ${ago(w.created_at)}${w.done?' · <span class="wdn">Done</span>':""}</div></div><div class="wact"><button class="wpreview-toggle" type="button" data-preview-toggle aria-expanded="${!c}" aria-label="${c?"Expand card":"Minimise card"}">${CHV}</button><button class="wmore" data-wmenu="${w.id}" aria-label="More actions for ${esc(w.title)}">⋯</button></div></div><div class="wbody"><div class="xpost-mount" data-xpost></div>${w.why?`<div class="wn wy"><b>Why I saved it</b><p>${esc(w.why)}</p></div>`:""}${w.benefit?`<div class="wn hp"><b>How it helps</b><p>${esc(w.benefit)}</p></div>`:""}</div></article>`}
+function wrow(w,i){const u=esc(w.url),c=wCol(w.id),nt=isNote(w.url);return `<article class="wrow${w.done?" done":""}${c?" preview-collapsed":""}" style="--i:${i}" data-id="${w.id}"><div class="wtop">${nt?`<span class="wic" aria-hidden="true">${icon({url:"",title:w.title,emoji:noteEmoji(w.url)})}</span>`:`<a class="wic" href="${u}" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">${icon({url:w.url,title:w.title})}</a>`}<div class="wmeta">${nt?`<span class="wt">${esc(w.title)}</span>`:`<a class="wt" href="${u}" target="_blank" rel="noopener noreferrer">${esc(w.title)}</a>`}<div class="wh">${nt?"Note":esc(host(w.url))} · ${ago(w.created_at)}${w.done?' · <span class="wdn">Done</span>':""}</div></div><div class="wact"><button class="wpreview-toggle" type="button" data-preview-toggle aria-expanded="${!c}" aria-label="${c?"Expand card":"Minimise card"}">${CHV}</button><button class="wmore" data-wmenu="${w.id}" aria-label="More actions for ${esc(w.title)}">⋯</button></div></div><div class="wbody"><div class="xpost-mount" data-xpost></div>${w.note?`<div class="wn nt"><b>Note</b><p>${linkify(w.note)}</p></div>`:""}${w.why?`<div class="wn wy"><b>Why I saved it</b><p>${esc(w.why)}</p></div>`:""}${w.benefit?`<div class="wn hp"><b>How it helps</b><p>${esc(w.benefit)}</p></div>`:""}</div></article>`}
 function xPostId(raw){try{const u=new URL(raw);if(!/(^|\.)((x|twitter)\.com)$/i.test(u.hostname))return null;const m=u.pathname.match(/^\/([^/]+)\/status(?:es)?\/(\d+)/i);return m?{user:m[1],id:m[2],url:u.href}:null}catch{return null}}
 function xEsc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 async function fetchXPost(info){
@@ -1917,9 +1956,9 @@ function xPostMarkup(p,url){
  const long=String(p.text||"").length>260;
  return `<div class="xpost-card">
   <div class="xpost-head">${p.avatar?`<img class="xpost-avatar" src="${xEsc(p.avatar)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:`<span class="xpost-avatar"></span>`}<div class="xpost-author"><span class="xpost-name">${xEsc(p.name)}</span><span class="xpost-handle">@${xEsc(p.user)}</span></div></div>
-  <p class="xpost-text${long?" is-clamped":""}">${xEsc(p.text)}</p>${p.image?`<img class="xpost-media" src="${xEsc(p.image)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:""}
+  <p class="xpost-text" data-full="${xEsc(p.text)}" data-lines="5"><span class="xt">${xEsc(p.text)}</span><span class="xmore" role="button" tabindex="0" hidden></span></p>${p.image?`<img class="xpost-media" src="${xEsc(p.image)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:""}
   <div class="xpost-footer"><div class="xpost-metrics"><span>${xMetric(p.likes)} likes</span><span>${xMetric(p.replies)} replies</span></div><a class="xpost-open" href="${xEsc(url)}" target="_blank" rel="noopener noreferrer">View on X ↗</a></div>
-  ${long?'<button type="button" class="xpost-expand" aria-expanded="false">Read more <span>⌄</span></button>':""}
+  
  </div>`
 }
 function youtubeInfo(raw){
@@ -1939,7 +1978,7 @@ function youtubeMarkup(info,title,url){
 }
 function ytPlay(b){const c=b.closest(".ytpost-card");if(!c)return;if(!/^https?:$/.test(location.protocol)){openLink(c.dataset.url);toast("Opening in YouTube. Playing inside the card needs the app on a web address.");return}const f=document.createElement("iframe");f.className="ytpost-player";f.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(c.dataset.yt)+"?autoplay=1&playsinline=1&rel=0";f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";f.allowFullscreen=true;f.title="YouTube video";f.referrerPolicy="strict-origin-when-cross-origin";b.replaceWith(f)}
 function enhanceYouTube(root){
- root.querySelectorAll(".wrow").forEach(row=>{
+ rowsOf(root).forEach(row=>{
   const link=row.querySelector(".wt"),mount=row.querySelector("[data-xpost]");
   if(!link||!mount||mount.dataset.ytStarted)return;
   const info=youtubeInfo(link.href);if(!info)return;
@@ -1952,12 +1991,31 @@ function instagramInfo(raw){try{const u=new URL(raw);if(!/(^|\.)instagram\.com$/
 function igMarkup(i){
  if(i.id)return `<div class="igpost-card"><iframe class="igpost-frame" src="https://www.instagram.com/${i.kind}/${encodeURIComponent(i.id)}/embed/" title="Instagram post" loading="lazy" scrolling="no" allowtransparency="true" referrerpolicy="strict-origin-when-cross-origin"></iframe><a class="xpost-open igpost-open" href="${xEsc(i.url)}" target="_blank" rel="noopener noreferrer">View on Instagram ↗</a></div>`;
  return `<a class="igpost-card igpost-link" href="${xEsc(i.url)}" target="_blank" rel="noopener noreferrer"><span class="igpost-badge"></span><span class="igpost-txt"><b>Instagram</b><small>${i.profile?"@"+xEsc(i.profile):"Open on Instagram"}</small></span></a>`}
-function enhanceInstagram(root){root.querySelectorAll(".wrow").forEach(row=>{const link=row.querySelector(".wt"),mount=row.querySelector("[data-xpost]");if(!link||!mount||mount.dataset.igStarted)return;const i=instagramInfo(link.href);if(!i)return;mount.dataset.igStarted="1";row.classList.add("igpost-row");mount.innerHTML=igMarkup(i)})}
+function enhanceInstagram(root){rowsOf(root).forEach(row=>{const link=row.querySelector(".wt"),mount=row.querySelector("[data-xpost]");if(!link||!mount||mount.dataset.igStarted)return;const i=instagramInfo(link.href);if(!i)return;mount.dataset.igStarted="1";row.classList.add("igpost-row");mount.innerHTML=igMarkup(i)})}
 addEventListener("message",e=>{if(e.origin!=="https://www.instagram.com")return;let d=e.data;try{if(typeof d==="string")d=JSON.parse(d)}catch{return}if(!d||d.type!=="MEASURE"||!d.details||!d.details.height)return;document.querySelectorAll(".igpost-frame").forEach(f=>{if(f.contentWindow===e.source)f.style.height=Math.ceil(d.details.height)+"px"})});
-function enhanceXPosts(root){root.querySelectorAll(".wrow").forEach(row=>{const link=row.querySelector(".wt");const mount=row.querySelector("[data-xpost]");if(!link||!mount||mount.dataset.started)return;const info=xPostId(link.href);if(!info)return;mount.dataset.started="1";row.classList.add("xpost-row");mount.innerHTML='<div class="xpost-loading">Loading X post preview…</div>';
- fetchXPost(info).then(p=>{if(!row.isConnected)return;mount.innerHTML=xPostMarkup(p,info.url);mount.addEventListener("click",e=>{const b=e.target.closest(".xpost-expand");if(!b)return;const text=mount.querySelector(".xpost-text");const expanded=b.getAttribute("aria-expanded")==="true";text.classList.toggle("is-clamped",expanded);b.setAttribute("aria-expanded",String(!expanded));b.innerHTML=expanded?'Read more <span>⌄</span>':'Show less <span>⌃</span>'})}).catch(()=>{if(!row.isConnected)return;const frame=document.createElement("iframe");frame.className="xpost-frame";frame.loading="lazy";frame.title="X post";frame.referrerPolicy="strict-origin-when-cross-origin";frame.src=`https://platform.twitter.com/embed/Tweet.html?id=${encodeURIComponent(info.id)}&theme=light&dnt=true&hideThread=true&lang=en`;mount.replaceChildren(frame);const note=document.createElement("div");note.className="xpost-fallback";note.textContent="If the preview does not load, open the post on X.";mount.append(note)})
+function enhanceXPosts(root){rowsOf(root).forEach(row=>{const link=row.querySelector(".wt");const mount=row.querySelector("[data-xpost]");if(!link||!mount||mount.dataset.started)return;const info=xPostId(link.href);if(!info)return;mount.dataset.started="1";row.classList.add("xpost-row");mount.innerHTML='<div class="xpost-loading">Loading X post preview…</div>';
+ fetchXPostC(info).then(p=>{if(!row.isConnected)return;mount.innerHTML=xPostMarkup(p,info.url);xFit(mount.querySelector(".xpost-text"))}).catch(()=>{if(!row.isConnected)return;const frame=document.createElement("iframe");frame.className="xpost-frame";frame.loading="lazy";frame.title="X post";frame.referrerPolicy="strict-origin-when-cross-origin";frame.src=`https://platform.twitter.com/embed/Tweet.html?id=${encodeURIComponent(info.id)}&theme=light&dnt=true&hideThread=true&lang=en`;mount.replaceChildren(frame);const note=document.createElement("div");note.className="xpost-fallback";note.textContent="If the preview does not load, open the post on X.";mount.append(note)})
  })}
 
+const rowsOf=r=>r.matches&&r.matches(".wrow")?[r]:r.querySelectorAll(".wrow");
+const enhRow=r=>{enhanceXPosts(r);enhanceYouTube(r);enhanceInstagram(r)};
+const xCache=new Map();
+function fetchXPostC(info){let p=xCache.get(info.id);if(!p){p=fetchXPost(info);p.catch(()=>xCache.delete(info.id));xCache.set(info.id,p)}return p}
+function xFit(p){
+ if(!p||!p.isConnected||!p.getClientRects().length)return;
+ const full=p.dataset.full||"",t=p.firstChild,m=p.lastChild,L=+p.dataset.lines||5,lh=parseFloat(getComputedStyle(p).lineHeight)||21,max=lh*L+2,h=()=>p.getBoundingClientRect().height;
+ if(p.dataset.open==="1"){t.textContent=full+" ";m.textContent="less";m.hidden=false;return}
+ t.textContent=full;m.hidden=true;
+ if(h()<=max)return;
+ m.hidden=false;m.textContent="more";
+ let lo=0,hi=full.length;
+ while(lo<hi){const mid=(lo+hi+1)>>1;t.textContent=full.slice(0,mid).trimEnd()+"… ";if(h()<=max)lo=mid;else hi=mid-1}
+ let cut=full.slice(0,lo);const sp=cut.search(/\s\S{0,12}$/);if(sp>lo*.6)cut=cut.slice(0,sp);
+ t.textContent=cut.trimEnd()+"… "}
+function xToggle(b){const p=b.closest(".xpost-text");if(!p)return;p.dataset.open=p.dataset.open==="1"?"0":"1";xFit(p)}
+const fitRow=r=>r.querySelectorAll(".xpost-text").forEach(xFit);
+{let xr;const re=()=>{clearTimeout(xr);xr=setTimeout(()=>document.querySelectorAll(".xpost-text").forEach(xFit),150)};addEventListener("resize",re);document.fonts&&document.fonts.ready.then(re);
+ document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("xmore")){e.preventDefault();xToggle(e.target)}})}
 function drawW(){const m=$("#main"),tb=$("#tags"),n=W.length,td=W.filter(w=>!w.done).length;
  tb.innerHTML=n?[["all","All",n],["todo","To watch",td],["done","Done",n-td]].map(([k,l,c])=>`<button class="chip ${wf===k?"on":""}" data-wf="${k}">${l}<b>${c}</b></button>`).join("")+wvBtn():"";tabWatch(tb);
  m.className="wl"+(wview()==="min"?" wmin":"");
@@ -1968,34 +2026,70 @@ function drawW(){const m=$("#main"),tb=$("#tags"),n=W.length,td=W.filter(w=>!w.d
  if(!n&&S&&wBusy){m.innerHTML='<div class="wsk"></div>'.repeat(3);return}
  if(!n){m.innerHTML='<div class="empty"><h3>Nothing saved yet</h3>Save links you want to come back to, and note why you saved them and how they will help you.<br><button class="cta" data-wadd>Add your first link</button></div>';return}
  if(!v.length){m.innerHTML='<div class="empty"><h3>No matches</h3>Try a different word or filter.</div>';return}
- m.innerHTML=v.map(wrow).join("");
- enhanceXPosts(m);enhanceYouTube(m);enhanceInstagram(m);
+ m.innerHTML=v.map(wrow).join("");if(v.length>1&&!ls.lp_wtip){try{ls.lp_wtip=1}catch{}toast("Tip: press and hold a card, then drag to reorder")}
+ m.querySelectorAll(".wrow:not(.preview-collapsed)").forEach(enhRow);
  if(anim){anim=false;const dir=swDir;swDir=0;if(dir){void m.offsetWidth;m.style.setProperty("--sd",dir);m.classList.add("sw")}if(!dir)m.classList.add("intro");(clearTimeout(window._it),window._it=setTimeout(()=>m.classList.remove("intro"),4500),clearTimeout(window._it2),window._it2=setTimeout(()=>m.classList.remove("sw"),/^ic-|^wave$/.test(looks.tsw)?4200:1400))}}
 function wClick(e){const t=e.target;let b;
- if(b=t.closest("[data-preview-toggle]")){const row=b.closest(".wrow");if(!row)return;const id=row.dataset.id;wFlip.has(id)?wFlip.delete(id):wFlip.add(id);const c=wCol(id);row.classList.toggle("preview-collapsed",c);b.setAttribute("aria-expanded",String(!c));b.setAttribute("aria-label",c?"Expand card":"Minimise card")}
+ if(b=t.closest("[data-preview-toggle]")){const row=b.closest(".wrow");if(!row)return;const id=row.dataset.id;wFlip.has(id)?wFlip.delete(id):wFlip.add(id);const c=wCol(id);row.classList.toggle("preview-collapsed",c);if(!c){enhRow(row);fitRow(row)}b.setAttribute("aria-expanded",String(!c));b.setAttribute("aria-label",c?"Expand card":"Minimise card")}
+ else if(b=t.closest(".xmore")){e.preventDefault();xToggle(b)}
  else if(b=t.closest("[data-ytplay]")){e.preventDefault();ytPlay(b)}
  else if(b=t.closest("[data-wdone]")){e.preventDefault();wToggle(b.dataset.wdone)}
  else if(b=t.closest("[data-wmenu]")){e.preventDefault();wmenu(b.dataset.wmenu,b)}
  else if(t.closest("[data-wadd]"))openW();
  else if(t.closest("[data-wsql]"))copySQL();
  else if(t.closest("[data-wretry]")){wBusy=true;wErr="";draw();loadW(true)}}
+/* ---- Saved: press and hold (touch) or drag (mouse) a card to reorder ---- */
+let wd=null,wJust=false;const wmain=$("#main");
+wmain.addEventListener("click",e=>{if(wJust){e.preventDefault();e.stopImmediatePropagation()}},true);
+wmain.addEventListener("dragstart",e=>{if(mode==="watch")e.preventDefault()});
+wmain.addEventListener("pointerdown",e=>{
+ if(mode!=="watch"||e.target.closest("button")||(e.pointerType==="mouse"&&e.button!==0))return;
+ const h=e.target.closest(".wtop"),c=h&&h.closest(".wrow");if(!c)return;
+ wd={c,h,x:e.clientX,y:e.clientY,px:e.clientX,py:e.clientY,on:false,touch:e.pointerType!=="mouse"};
+ if(wd.touch)wd.t=setTimeout(wBegin,380)});
+function wBegin(){if(!wd||wd.on)return;wd.on=true;navigator.vibrate?.(12);
+ const r=wd.c.getBoundingClientRect(),g=document.createElement("div");g.className="wl wgh";g.style.cssText=`width:${r.width}px;left:${r.left}px;top:${r.top}px`;
+ const w=document.createElement("div");w.className="wrow";w.appendChild(wd.h.cloneNode(true));g.appendChild(w);document.body.appendChild(g);
+ wd.g=g;wd.ox=wd.x-r.left;wd.oy=wd.y-r.top;
+ wd.c.classList.add("lift");wmain.classList.add("wdrag");document.body.classList.add("dragging");wTick()}
+function wHit(){const t=document.elementFromPoint(wd.px,wd.py)?.closest(".wrow");
+ if(t&&t!==wd.c&&t.parentElement===wd.c.parentElement&&t.classList.contains("done")===wd.c.classList.contains("done")){const k=[...t.parentElement.children];t.parentElement.insertBefore(wd.c,k.indexOf(wd.c)<k.indexOf(t)?t.nextSibling:t)}}
+function wTick(){if(!wd||!wd.on)return;if(wd.py<110)scrollBy(0,-14);else if(wd.py>innerHeight-90)scrollBy(0,14);wHit();requestAnimationFrame(wTick)}
+addEventListener("pointermove",e=>{if(!wd)return;
+ if(!wd.on){if(Math.hypot(e.clientX-wd.x,e.clientY-wd.y)>(wd.touch?10:6)){if(wd.touch){clearTimeout(wd.t);wd=null}else wBegin()}return}
+ wd.px=e.clientX;wd.py=e.clientY;wd.g.style.left=e.clientX-wd.ox+"px";wd.g.style.top=e.clientY-wd.oy+"px"});
+addEventListener("touchmove",e=>{if(wd&&wd.on)e.preventDefault()},{passive:false});
+addEventListener("contextmenu",e=>{if(wd)e.preventDefault()});
+function wEnd(cancel){if(!wd)return;clearTimeout(wd.t);const d=wd;wd=null;if(!d.on)return;
+ d.g.remove();wmain.classList.remove("wdrag");document.body.classList.remove("dragging");d.c.classList.remove("lift");
+ wJust=true;setTimeout(()=>wJust=false,80);if(cancel){draw();return}
+ const ids=[...wmain.querySelectorAll(".wrow")].map(r=>r.dataset.id),o=wOrd(),set=new Set(ids),slots=[];
+ o.forEach((id,i)=>set.has(id)&&slots.push(i));ids.forEach((id,k)=>o[slots[k]]=id);
+ cfg.word=o;saveCfg();draw();toast("Order saved")}
+addEventListener("pointerup",()=>wEnd());addEventListener("pointercancel",()=>wEnd(true));
 function copySQL(){copyText(setupPrompt(),"Setup prompt copied","Setup prompt")}
 async function wToggle(id){const w=W.find(x=>x.id===id);if(!w)return;const v=!w.done;w.done=v;cache();draw();try{await db(`lp_watchlist?id=eq.${id}`,{m:"PATCH",b:{done:v,updated_at:new Date().toISOString()},p:"return=minimal"})}catch(er){w.done=!v;cache();draw();toast(er.message)}}
 async function wDelete(id){if(!confirm("Remove this item from Saved?"))return;try{await db(`lp_watchlist?id=eq.${id}`,{m:"DELETE",p:"return=minimal"});W=W.filter(x=>x.id!==id);cache();draw();toast("Removed")}catch(er){toast(er.message)}}
-function wmenu(id,el){const w=W.find(x=>x.id===id);if(!w)return;const p=mn.firstChild;navigator.vibrate?.(12);
- p.innerHTML=`<div class="mnh"><b>${esc(w.title)}</b><small>${esc(host(w.url))}</small></div><button data-a="open">Open link</button><button data-a="done">${w.done?"Move back to watch":"Mark as done"}</button><button data-a="copy">Copy link</button><button data-a="edit">Edit notes</button><button data-a="del" class="x">Delete</button>`;
+function wmenu(id,el){const w=W.find(x=>x.id===id);if(!w)return;const p=mn.firstChild,vv=wvis().map(x=>x.id),ix=vv.indexOf(id),last=vv.length-1;navigator.vibrate?.(12);
+ p.innerHTML=`<div class="mnh"><b>${esc(w.title)}</b><small>${isNote(w.url)?"Note":esc(host(w.url))}</small></div>${isNote(w.url)?"":'<button data-a="open">Open link</button>'}<button data-a="done">${w.done?"Move back to watch":"Mark as done"}</button>${isNote(w.url)?"":'<button data-a="copy">Copy link</button>'}${ix>0?'<button data-a="top">Move to top</button><button data-a="up">Move up</button>':""}${ix>=0&&ix<last?'<button data-a="dn">Move down</button>':""}<button data-a="edit">Edit</button><button data-a="del" class="x">Delete</button>`;
  mna=false;mn.hidden=false;const r=el.getBoundingClientRect(),pw=p.offsetWidth,ph=p.offsetHeight,L=Math.max(10,Math.min(innerWidth-pw-10,r.right-pw));let T=r.bottom+6,up=false;if(T+ph>innerHeight-10){T=Math.max(10,r.top-6-ph);up=true}
  p.style.cssText=`left:${L}px;top:${T}px;transform-origin:${r.right-L}px ${up?"100%":"0"}`;
  p.onclick=async e=>{const a=e.target.dataset.a;if(!a)return;mnx();
-  if(a==="open")openLink(w.url);else if(a==="done")wToggle(id);else if(a==="edit")openW(id);
+  if(a==="open")openLink(w.url);else if(a==="done")wToggle(id);else if(a==="edit")openW(id);else if(a==="top")wMove(id,"top");else if(a==="up")wMove(id,-1);else if(a==="dn")wMove(id,1);
   else if(a==="copy"){try{await navigator.clipboard.writeText(w.url);toast("Link copied")}catch{toast("Couldn't copy the link")}}
   else if(a==="del")wDelete(id)}}
-function openW(id=null){if($("#wdlg").open)return;if(C.url.startsWith("YOUR_"))return openSetup();if(!S)return openSync();wEd=id;const w=W.find(x=>x.id===id);$("#wdt").textContent=w?"Edit saved item":"Add to Saved";$("#wu").value=w?.url||"";$("#wt").value=w?.title||"";$("#ww").value=w?.why||"";$("#wb").value=w?.benefit||"";$("#wdel").hidden=!w;$("#werr").textContent="";$("#wdlg").showModal();if(!w)$("#wu").focus()}
+const WE=["📝","💡","📌","⭐","📚","🎯","✅","🔖","💬","🧠","🔗","🛒"];
+let wEmoji="📝";
+const noteEmoji=u=>String(u||"").split("|")[1]||"📝";
+function wEmUI(){$("#wicw").hidden=!!$("#wu").value.trim();const cur=$("#wie").value.trim()||wEmoji;$("#wics").innerHTML=WE.map(e=>`<button type="button" class="chip s ${e===cur?"on":""}" data-e="${e}">${e}</button>`).join("")}
+$("#wics").onclick=e=>{const b=e.target.closest("[data-e]");if(!b)return;wEmoji=b.dataset.e;$("#wie").value="";wEmUI()};
+$("#wie").oninput=wEmUI;$("#wu").addEventListener("input",wEmUI);
+function openW(id=null){if($("#wdlg").open)return;if(C.url.startsWith("YOUR_"))return openSetup();if(!S)return openSync();wEd=id;const w=W.find(x=>x.id===id);$("#wdt").textContent=w?"Edit saved item":"Add to Saved";$("#wu").value=w&&!isNote(w.url)?w.url:"";$("#wn").value=w?.note||"";wEmoji=w&&isNote(w.url)?noteEmoji(w.url):"📝";$("#wie").value="";wEmUI();$("#wt").value=w?.title||"";$("#ww").value=w?.why||"";$("#wb").value=w?.benefit||"";$("#wdel").hidden=!w;$("#werr").textContent="";$("#wdlg").showModal();if(!w)$("#wu").focus()}
 $("#wx").onclick=()=>$("#wdlg").close();
 $("#wdel").onclick=()=>{$("#wdlg").close();wDelete(wEd)};
-$("#wf").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;btn.disabled=true;try{const url=norm($("#wu").value),title=$("#wt").value.trim()||host(url),why=$("#ww").value.trim(),benefit=$("#wb").value.trim();
- if(wEd){const r=await db(`lp_watchlist?id=eq.${wEd}`,{m:"PATCH",b:{url,title,why,benefit,updated_at:new Date().toISOString()}});W=W.map(x=>x.id===wEd?((r&&r[0])||{...x,url,title,why,benefit}):x)}
- else{const r=await db("lp_watchlist",{m:"POST",b:{url,title,why,benefit}});if(!r||!r[0])throw Error("Couldn't save. Please try again.");W.unshift(r[0])}
+$("#wf").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;btn.disabled=true;try{const raw=$("#wu").value.trim(),old=W.find(x=>x.id===wEd),url=raw?norm(raw):(old&&/^note:/.test(old.url)?old.url.split("|")[0]:"note:"+(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)))+"|"+(($("#wie").value.trim()||wEmoji||"📝").slice(0,8)),title=$("#wt").value.trim()||(raw?host(url):""),why=$("#ww").value.trim(),benefit=$("#wb").value.trim(),note=$("#wn").value.trim(),nf=note||(old&&"note" in old)?{note}:{};if(!title)throw Error("Add a title or a link.");
+ if(wEd){const r=await db(`lp_watchlist?id=eq.${wEd}`,{m:"PATCH",b:{url,title,why,benefit,...nf,updated_at:new Date().toISOString()}});W=W.map(x=>x.id===wEd?((r&&r[0])||{...x,url,title,why,benefit,...nf}):x)}
+ else{const r=await db("lp_watchlist",{m:"POST",b:{url,title,why,benefit,...nf}});if(!r||!r[0])throw Error("Couldn't save. Please try again.");W.unshift(r[0])}
  wErr="";cache();draw();$("#wdlg").close();toast("Saved")}
  catch(er){$("#werr").textContent=/duplicate|23505/.test(er.message)?"This link is already saved.":missingW(er)?WMSG:er.message}
  btn.disabled=false};
@@ -2091,7 +2185,7 @@ $("#cfg").onclick=()=>{settingsUI();markQ();if(+ls.lp_sheet)sheetH(+ls.lp_sheet)
 $("#x2").onclick=()=>$("#sdlg").close();$("#x1").onclick=()=>$("#dlg").close();
 for(const d of document.querySelectorAll("dialog"))d.addEventListener("click",e=>{if(e.target===d)d.close()});
 $("#add").onclick=()=>C.url.startsWith("YOUR_")?openSetup():!S?openSync():mode==="watch"?openW():openForm();
-$("#exp").onclick=()=>{const data={app:"little-space",version:2,exported_at:new Date().toISOString(),bookmarks:B.map(({title,url,tags,pinned,icon_url,emoji})=>({title,url,tags,pinned,icon_url,emoji})),watchlist:W.map(({title,url,why,benefit,done,created_at})=>({title,url,why,benefit,done,created_at})),settings:{...cfg}};const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));a.download="little-space-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast("Exported "+B.length+" bookmarks")};
+$("#exp").onclick=()=>{const data={app:"little-space",version:2,exported_at:new Date().toISOString(),bookmarks:B.map(({title,url,tags,pinned,icon_url,emoji})=>({title,url,tags,pinned,icon_url,emoji})),watchlist:W.map(({title,url,note,why,benefit,done,created_at})=>({title,url,note:note||"",why,benefit,done,created_at})),settings:{...cfg}};const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));a.download="little-space-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast("Exported "+B.length+" bookmarks")};
 $("#imp").onclick=()=>$("#file").click();
 $("#file").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
  try{const t=(await f.text()).replace(/^\uFEFF/,"").trim();let bm=[],wl=[],st=null;
@@ -2105,7 +2199,8 @@ $("#file").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)
    const ic=typeof r.icon_url==="string"&&/^(https?:|data:image\/)/.test(r.icon_url)&&r.icon_url.length<200000?r.icon_url:null;
    nb.push({url:u,title:String(r.title||r.name||host(u)).slice(0,80),tags,pinned:!!r.pinned,icon_url:ic,emoji:typeof r.emoji==="string"&&r.emoji?r.emoji.slice(0,8):null})}
   const nw=[],sw=new Set();
-  for(const r of wl){if(!r||typeof r!=="object")continue;let u;try{u=norm(String(r.url||""))}catch{continue}if(sw.has(u))continue;sw.add(u);nw.push({url:u,title:String(r.title||host(u)).slice(0,120),why:String(r.why||"").slice(0,600),benefit:String(r.benefit||"").slice(0,600),done:!!r.done})}
+  for(const r of wl){if(!r||typeof r!=="object")continue;let u;try{u=/^note:/.test(String(r.url||""))?String(r.url):norm(String(r.url||""))}catch{continue}if(sw.has(u))continue;sw.add(u);nw.push({url:u,title:String(r.title||host(u)||"Note").slice(0,120),note:String(r.note||"").slice(0,5000),why:String(r.why||"").slice(0,600),benefit:String(r.benefit||"").slice(0,600),done:!!r.done})}
+  if(!nw.some(x=>x.note))nw.forEach(x=>delete x.note);
   if(!nb.length&&!nw.length)throw Error("No bookmarks found in this file.");
   toast("Importing "+(nb.length+nw.length)+" items");
   for(let i=0;i<nb.length;i+=200)await db("lp_bookmarks?on_conflict=user_id,url",{m:"POST",b:nb.slice(i,i+200),p:"resolution=ignore-duplicates,return=minimal"});
@@ -2119,17 +2214,84 @@ const secret=k=>/^sb_secret_/.test(k)||(()=>{try{return JSON.parse(atob(k.split(
 function openSetup(){if($("#cdlg").open)return;$("#cu").value=ls.lp_url||"";$("#ck").value=ls.lp_key||"";$("#cerr").textContent="";$("#cdlg").showModal()}
 $("#cf").onsubmit=async e=>{e.preventDefault();const b=e.submitter,old={...C},oS=S;b.disabled=true;try{const u=$("#cu").value.trim().replace(/\/+$/,"").replace(/\/(rest|auth)\/v1.*$/,""),k=$("#ck").value.trim();if(!/^https:\/\/[^\s/]+\.[^\s/]+$/.test(u))throw Error("The URL should look like https://abcd1234.supabase.co");if(secret(k))throw Error("That is the secret key. Use the publishable key instead.");if(k.length<20||/\s/.test(k))throw Error("Paste the full publishable key.");C.url=u;C.key=k;const r=await fetch(u+"/auth/v1/settings",{headers:{apikey:k}});if(!r.ok)throw Error("That URL or key doesn't match a Supabase project.");if(u!==old.url){S=null;delete ls.lp_session;delete ls.lp_code}ls.lp_url=u;ls.lp_key=k;$("#cdlg").close();toast("Connected");S?await load():openSync()}catch(er){C.url=old.url;C.key=old.key;S=oS;$("#cerr").textContent=er.message==="Failed to fetch"?"Couldn't reach that URL. Check it for typos.":er.message}b.disabled=false};
 $("#x3").onclick=()=>$("#cdlg").close();
-function setupPrompt(){return `Set up the backend for my "Little Space" bookmarks app with your Supabase tools. Do each step yourself instead of only describing it.
+function setupPrompt(){return `Set up the backend for my "Little Space" app in Supabase. Do each step yourself and show evidence. Never display the database password, secret key, service_role key or any token.
 
-1. Project: list my organizations and projects. Use the project named "little-space" if it exists. Otherwise create it (nearest region), show me the cost with get_cost, and ask me before confirming it. Wait until the project is active.
-2. Database: apply the SQL below as one migration named "little_space_setup". It is safe to run more than once.
-3. Auth: keep email sign-up enabled and turn "Confirm email" off. The app creates hidden logins for its sync codes. Explain this and ask before changing it. If your tools cannot change it, tell me where to do it.
-4. Verify and show evidence: tables lp_bookmarks, lp_settings and lp_watchlist exist; Row Level Security is on for all three; each policy limits rows to their owner; the function lp_reorder(uuid[]) exists; the authenticated role has the required grants; the schema cache is reloaded.
-5. Report: the Project URL, the publishable key (starts with sb_publishable_), the status of each step, and anything left for me to do.
+0. PROJECT
+List my organizations and projects. Use the project named "little-space" if it exists. If not, show the cost with get_cost and ask me before creating it. Confirm the project ID and wait until it is active.
 
-Never show the database password, the secret key, the service_role key or any token. If you cannot do something, say so.
+1. TABLES (exactly three, no extra tables, columns, triggers or features)
 
-SQL:
+public.lp_bookmarks
+- id uuid primary key default gen_random_uuid()
+- user_id uuid not null default auth.uid() references auth.users(id) on delete cascade
+- url text not null
+- title text not null
+- tags text[] not null default '{}'
+- pinned boolean not null default false
+- icon_url text null
+- emoji text null
+- position integer not null default 0
+- open_count integer not null default 0
+- last_opened_at timestamptz null
+- created_at timestamptz not null default now()
+- updated_at timestamptz not null default now()
+Indexes: unique (user_id, url); (user_id, created_at desc).
+
+public.lp_settings
+- user_id uuid primary key default auth.uid() references auth.users(id) on delete cascade
+- data jsonb not null default '{}'
+- updated_at timestamptz not null default now()
+(Stores preferences, saved card order, appearance and saved looks as JSON. No extra indexes: the primary key is enough.)
+
+public.lp_watchlist
+- id uuid primary key default gen_random_uuid()
+- user_id uuid not null default auth.uid() references auth.users(id) on delete cascade
+- url text not null
+- title text not null
+- why text not null default ''
+- benefit text not null default ''
+- note text not null default ''
+- done boolean not null default false
+- created_at timestamptz not null default now()
+- updated_at timestamptz not null default now()
+Constraint: check (char_length(note) <= 5000).
+Indexes: unique (user_id, url); (user_id, created_at desc).
+Notes without a link store url as "note:<id>|<emoji>". No change to the table is needed for this.
+The unique indexes must be plain (not partial) because the app upserts with on_conflict=user_id,url.
+
+2. SECURITY
+- Enable Row Level Security on all three tables.
+- One policy per table, FOR ALL TO authenticated, with USING and WITH CHECK both "user_id = (select auth.uid())".
+- Grant select, insert, update, delete on the three tables to authenticated only.
+- Revoke all privileges on the three tables from anon and public.
+- Never allow anonymous access to user data.
+
+3. FUNCTION
+Create public.lp_reorder(ids uuid[]) returns void, language sql, SECURITY INVOKER, set search_path = public. It sets position = (array index - 1) for bookmarks whose id is in the array and whose user_id = auth.uid(). Revoke execute from public and anon, then grant execute to authenticated.
+
+4. AUTH
+The app creates its own sync-code accounts with email and password. Do not require anonymous sign-in, triggers or custom auth tables. Do not change any Auth setting without my approval. If "Confirm email" is on, tell me where to turn it off (Authentication, Sign In / Providers, Email). Keep sign-ups enabled.
+
+5. PROCEDURE
+1) Inspect existing tables, functions, indexes and policies in public.
+2) If the three tables or the function already exist and hold data, STOP and ask me. Never drop the whole public schema, and never touch auth or storage. For a clean rebuild, drop only these three tables and this function, and only after my approval.
+3) Apply everything as one migration named "little_space_setup". It must be safe to run more than once. You may use the reference SQL at the end of this message if it matches the spec above.
+4) Run: notify pgrst, 'reload schema'.
+
+6. VERIFY (do not claim success without evidence)
+- Exactly three application tables exist, with correct columns, types, NOT NULL and defaults.
+- Foreign keys point to auth.users with on delete cascade.
+- Unique indexes exist once, with no duplicates, and are not partial.
+- RLS is on for all three tables; every policy has both USING and WITH CHECK using (select auth.uid()).
+- The note length check exists.
+- The reorder function exists, is SECURITY INVOKER, has a fixed search_path, and execute is granted only to authenticated.
+- anon and public have no table privileges or function execute rights.
+- Auth and Storage were not changed. No SQL errors occurred.
+
+7. REPORT
+Project ID and name; tables, columns and indexes verified; RLS and policies; function; warnings; manual steps left; the Project URL and the publishable key (starts with sb_publishable_).
+
+REFERENCE SQL:
 ${SQL}`}
 $("#cai").onclick=()=>copyText(setupPrompt(),"Setup prompt copied","Setup prompt");
 $("#conn").onclick=()=>{$("#sdlg").close();openSetup()};
@@ -2155,12 +2317,12 @@ $("#yout").onclick=()=>{if(!confirm("Turn off sync on this device? Your bookmark
 $("#ynew").onclick=async e=>{const b=e.currentTarget;b.disabled=true;$("#yerr").textContent="";try{await joinSync([...crypto.getRandomValues(new Uint8Array(16))].map(x=>AL[x%32]).join(""),true);ySet();toast("Sync is on. Save your code.")}catch(er){yerr(er)}b.disabled=false};
 $("#yf").onsubmit=async e=>{e.preventDefault();const b=e.submitter,c=nc($("#yc").value);if(c.length!==16){$("#yerr").textContent="Enter the full 16-character code.";return}b.disabled=true;$("#yerr").textContent="";try{await joinSync(c,false);ySet();toast("Sync is on")}catch(er){yerr(er)}b.disabled=false};
 /* ---- keyboard ---- */
-addEventListener("keydown",e=>{const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);if(e.key==="/"&&!typing&&!document.querySelector("dialog[open]")){e.preventDefault();window.lpOpenSearch&&window.lpOpenSearch()}else if(e.key==="Enter"&&document.activeElement===$("#q")){const f=mode==="watch"?wvis()[0]:sorted(visible())[0];if(f){openLink(f.url);if(mode!=="watch")opened(f.id)}}else if(e.key==="Escape"&&document.activeElement===$("#q")){$("#q").value="";$("#q").blur();draw()}});
+addEventListener("keydown",e=>{const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);if(e.key==="/"&&!typing&&!document.querySelector("dialog[open]")){e.preventDefault();window.lpOpenSearch&&window.lpOpenSearch()}else if(e.key==="Enter"&&document.activeElement===$("#q")){const f=mode==="watch"?wvis()[0]:sorted(visible())[0];if(f&&!(mode==="watch"&&isNote(f.url))){openLink(f.url);if(mode!=="watch")opened(f.id)}}else if(e.key==="Escape"&&document.activeElement===$("#q")){$("#q").value="";$("#q").blur();draw()}});
 addEventListener("online",()=>S&&load());
 
 /* ---- boot: paint cache instantly, then sync ---- */
 try{const c=JSON.parse(ls.lp_cache||"null");if(c){B=c.B||[];W=c.W||[];wBusy=!W.length;cfg={...cfg,...renew(c.cfg)};if(cfg.looks)looks={...LD,...cfg.looks};loaded=true}}catch{}
-addEventListener("scroll",()=>$(".top").classList.toggle("sc",scrollY>6),{passive:true});theme();document.body.classList.add("boot");setTimeout(()=>document.body.classList.remove("boot"),1200);initTag();draw();
+{const tp=$(".top");let s0=false;addEventListener("scroll",()=>{const v=scrollY>6;if(v!==s0){s0=v;tp.classList.toggle("sc",v)}},{passive:true})}theme();document.body.classList.add("boot");setTimeout(()=>document.body.classList.remove("boot"),1200);initTag();draw();
 if(C.url.startsWith("YOUR_")){vividOnce();theme();setTimeout(openSetup,400)}else if(S)load();else{vividOnce();theme();loaded=true;draw();setTimeout(openSync,400)}
 
 
@@ -2797,7 +2959,7 @@ function ret(){if(!L)return;L=null;clearTimeout(ft);
  chrome().forEach(el=>el.getAnimations().forEach(x=>x.cancel()))}
 M.addEventListener("click",e=>{
  if(e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
- const a=e.target.closest("a.card,.wic,.wt");if(!a||e.target.closest("[data-edit]"))return;
+ const a=e.target.closest("a.card,.wic,.wt");if(!a||!a.href||e.target.closest("[data-edit]"))return;
  const books=mode==="books";if(books&&(sel||justDragged))return;
  if(L){e.preventDefault();e.stopImmediatePropagation();return}
  if(quick())return;
