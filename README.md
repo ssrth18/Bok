@@ -2,7 +2,7 @@
 
 ## Install on your device
 Host this folder on any HTTPS site (GitHub Pages, Netlify, Cloudflare Pages, Vercel), then open it:
-- **Chrome / Edge (desktop & Android):** click the "Install app" button in the app, or the install icon in the address bar.
+- **Chrome / Edge (desktop & Android):** use Chrome menu → Install app (or the install icon in the address bar).
 - **iPhone / iPad (Safari):** Share → Add to Home Screen.
 
 ## Run locally
