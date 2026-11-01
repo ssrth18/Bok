@@ -1179,6 +1179,76 @@ body[data-bgfx=shaderwaves]::before{background:linear-gradient(0deg,#15231F 0%,#
 #wgl{position:fixed;top:0;left:0;width:100%;height:100vh;height:100lvh;z-index:-1;pointer-events:none;display:none;opacity:var(--bgs,1)}
 body[data-bgfx=shaderwaves] #wgl{display:block}
 :root:not([data-t=dark]) body[data-bgfx=shaderwaves]::before,:root:not([data-t=dark]) body[data-bgfx=shaderwaves] #wgl{opacity:calc(var(--bgs,1)*.5)}
+
+/* ---- Added bookmark Card View ---- */
+.cards .grid{
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,245px),1fr));
+  gap:13px;
+}
+.cards .card{
+  min-height:86px;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  padding:13px 38px 13px 13px;
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:var(--sf);
+  box-shadow:0 5px 16px rgba(40,45,34,.045),inset 0 1px 0 rgba(255,255,255,.55);
+  text-align:left;
+}
+.cards .ic{width:50px;height:50px;flex:none;border-radius:15px}
+.cards .col{flex:1;min-width:0}
+.cards .grid .t{
+  display:-webkit-box;
+  text-align:left;
+  padding:0;
+  font-size:calc(14px*var(--ts,1));
+  font-weight:650;
+  line-height:1.3;
+  -webkit-line-clamp:2;
+}
+.cards .h{
+  display:block;
+  margin-top:4px;
+  color:var(--mu);
+  font-size:calc(11px*var(--ts,1));
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.cards .pin{
+  top:7px;
+  left:7px;
+  margin:0;
+  width:16px;
+  height:16px;
+}
+.cards .more{
+  display:grid!important;
+  opacity:1;
+  top:7px;
+  right:7px;
+  width:27px;
+  height:27px;
+}
+@media(hover:hover){
+  .cards .card:hover{
+    transform:translateY(-2px);
+    border-color:color-mix(in srgb,var(--ac) 32%,var(--bd));
+    box-shadow:0 10px 24px rgba(40,45,34,.09);
+  }
+}
+@media(max-width:600px){
+  .cards .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .cards .card{min-height:82px;padding:12px 30px 12px 10px;gap:9px;border-radius:15px}
+  .cards .ic{width:40px;height:40px;border-radius:12px}
+  .cards .grid .t{font-size:calc(12px*var(--ts,1));-webkit-line-clamp:2}
+  .cards .h{font-size:calc(10px*var(--ts,1))}
+  .cards .more{width:23px;height:23px;top:5px;right:5px;font-size:15px}
+}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 </head>
@@ -1254,7 +1324,7 @@ body[data-bgfx=shaderwaves] #wgl{display:block}
  <div class="shead"><h3 tabindex="-1" autofocus>Settings</h3><button class="btn p" id="x2" type="button">Done</button></div>
  <div class="seg atabs" id="aTabs" role="tablist" aria-label="Settings sections"><button type="button" role="tab" data-t="colors">Colors</button><button type="button" role="tab" data-t="page">Layout</button><button type="button" role="tab" data-t="icons">Icons</button><button type="button" role="tab" data-t="text">Text</button><button type="button" role="tab" data-t="motion">Motion</button><button type="button" role="tab" data-t="tabs">Tabs</button><button type="button" role="tab" data-t="data">Data</button></div></div>
  <div class="apanel" data-t="colors" role="tabpanel"><div class="pal" id="swatches" role="group" aria-label="Color theme"></div><select id="lookPreset" hidden aria-hidden="true" tabindex="-1"><option value="cozy">Cozy Garden</option><option value="rose">Rosewater</option><option value="ocean">Quiet Ocean</option><option value="mono">Soft Monochrome</option><option value="sunset">Golden Hour</option><option value="berry">Berry Milk</option><option value="mint">Mint &amp; Cream</option><option value="custom">Custom colors</option></select><div class="fg"><div class="f" data-seg><b>Light or dark</b><select id="c-theme"><option value="auto">Auto</option><option value="light">Light</option><option value="dark">Dark</option></select></div><div class="f" data-seg><b>Dark style</b><select id="darkStyle"><option value="soft">Soft</option><option value="black">True black</option></select></div><div class="f w2"><b>Your own colors</b><div class="cols3"><label class="cl"><input id="customAccent" type="color" value="#62745b"><span>Accent</span></label><label class="cl"><input id="customBg" type="color" value="#f5f1e9"><span>Background</span></label><label class="cl"><input id="customSurface" type="color" value="#fffdf8"><span>Cards</span></label></div></div></div></div>
- <div class="apanel" data-t="page" role="tabpanel" hidden><div class="fg"><div class="f" data-seg><b>Layout</b><select id="c-view"><option value="grid">Grid</option><option value="list">List</option></select></div><div class="f" data-seg><b>List style</b><select id="listStyle"><option value="cards">Cards</option><option value="plain">Plain</option></select></div><div class="f" data-seg><b>Home screen</b><select id="grpSel"><option value="on">Grouped</option><option value="off">One list</option></select></div><div class="f"><b>Sort by</b><select id="c-sort"><option value="manual">Custom order</option><option value="recent">Newest first</option><option value="popular">Most used</option><option value="az">A–Z</option></select></div><div class="f"><b>Icons per row</b><select id="c-cols"><option value="0">Auto</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="8">8</option></select></div><div class="f" data-seg><b>Spacing</b><select id="density"><option value="compact">Tight</option><option value="comfortable">Normal</option><option value="airy">Roomy</option></select></div><div class="f r"><b><span>Row spacing</span><output id="v-gap"></output></b><input id="c-gap" type="range" min="8" max="40"></div><div class="f" data-seg><b>Page width</b><select id="layoutWidth"><option value="narrow">Narrow</option><option value="normal">Normal</option><option value="wide">Wide</option></select></div><div class="f" data-seg><b>Top bar</b><select id="headerStyle"><option value="blur">Frosted</option><option value="solid">Solid</option><option value="clear">Clear</option></select></div><div class="f" data-seg><b>Header position</b><select id="headerPos"><option value="bottom">Bottom</option><option value="top">Top</option></select></div><div class="f" data-seg><b>Add button</b><select id="fabPos"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select></div><div class="f" data-seg><b>Category titles</b><select id="sectionHeads"><option value="show">Show</option><option value="hide">Hide</option></select></div></div></div>
+ <div class="apanel" data-t="page" role="tabpanel" hidden><div class="fg"><div class="f" data-seg><b>Layout</b><select id="c-view"><option value="grid">Grid</option><option value="cards">Cards</option><option value="list">List</option></select></div><div class="f" data-seg><b>List style</b><select id="listStyle"><option value="cards">Cards</option><option value="plain">Plain</option></select></div><div class="f" data-seg><b>Home screen</b><select id="grpSel"><option value="on">Grouped</option><option value="off">One list</option></select></div><div class="f"><b>Sort by</b><select id="c-sort"><option value="manual">Custom order</option><option value="recent">Newest first</option><option value="popular">Most used</option><option value="az">A–Z</option></select></div><div class="f"><b>Icons per row</b><select id="c-cols"><option value="0">Auto</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="8">8</option></select></div><div class="f" data-seg><b>Spacing</b><select id="density"><option value="compact">Tight</option><option value="comfortable">Normal</option><option value="airy">Roomy</option></select></div><div class="f r"><b><span>Row spacing</span><output id="v-gap"></output></b><input id="c-gap" type="range" min="8" max="40"></div><div class="f" data-seg><b>Page width</b><select id="layoutWidth"><option value="narrow">Narrow</option><option value="normal">Normal</option><option value="wide">Wide</option></select></div><div class="f" data-seg><b>Top bar</b><select id="headerStyle"><option value="blur">Frosted</option><option value="solid">Solid</option><option value="clear">Clear</option></select></div><div class="f" data-seg><b>Header position</b><select id="headerPos"><option value="bottom">Bottom</option><option value="top">Top</option></select></div><div class="f" data-seg><b>Add button</b><select id="fabPos"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select></div><div class="f" data-seg><b>Category titles</b><select id="sectionHeads"><option value="show">Show</option><option value="hide">Hide</option></select></div></div></div>
  <div class="apanel" data-t="icons" role="tabpanel" hidden><div class="fg">
 <div class="mgh">Size &amp; shape</div>
 <div class="f r"><b><span>Icon size</span><output id="v-tile"></output></b><input id="c-tile" type="range" min="44" max="96"></div>
@@ -1490,7 +1560,7 @@ function draw(){modesUI();if(mode==="watch"){drawW();return}
  if(sig&&tb.dataset.sig===sig&&tb.querySelector("[data-tag]")){tb.querySelectorAll("[data-tag]").forEach(c=>c.classList.toggle("on",c.dataset.tag===tag))}
  else{tb.innerHTML=ks.map(k=>chips.get(k)).join("");tb.dataset.sig=sig;tb.scrollLeft=sl;tabWatch(tb)}
  if(pendReveal&&revealTab())pendReveal=false;
- const m=$("#main");m.className=(cfg.view==="list"?"list ":"")+(canDrag()?"manual":"")+(sel?" selecting":"");
+ const m=$("#main");m.className=(cfg.view==="list"?"list ":cfg.view==="cards"?"cards ":"")+(canDrag()?"manual":"")+(sel?" selecting":"");
  if(C.url.startsWith("YOUR_")){m.innerHTML='<div class="empty"><h3>Connect your database</h3>Add your Supabase project URL and key to start saving bookmarks.<br><button class="cta" data-setup>Set up</button></div>';return}
  if(!loaded&&!B.length){m.innerHTML='<div class="grid">'+'<div class="sk"></div>'.repeat(15)+"</div>";return}
  const v=sorted(visible());$("#cnt").textContent=B.length?v.length+"/"+B.length:"";
@@ -1657,7 +1727,7 @@ function mark(id,v){document.querySelectorAll(`#${id} button`).forEach(b=>b.clas
 /* ---- customize ---- */
 const D={ts:100,hf:"same",cols:0,tile:60,gap:18,rad:24,fs:12,lines:2,ff:0,host:0,open:"new",start:"first"},gv=k=>cfg[k]??D[k];
 const FF=["'Bricolage Grotesque',system-ui,sans-serif","-apple-system,BlinkMacSystemFont,'SF Pro Text',Inter,system-ui,sans-serif","Georgia,serif","ui-monospace,Menlo,monospace","Inter,system-ui,sans-serif","Poppins,system-ui,sans-serif","Nunito,system-ui,sans-serif","'DM Sans',system-ui,sans-serif","'Space Grotesk',system-ui,sans-serif","Lora,Georgia,serif","ui-rounded,'SF Pro Rounded',Nunito,system-ui,sans-serif","'Trebuchet MS',system-ui,sans-serif","Verdana,system-ui,sans-serif","'Palatino Linotype',Palatino,serif","'Playfair Display',Georgia,serif","Outfit,system-ui,sans-serif","Sora,system-ui,sans-serif","Fraunces,Georgia,serif"];
-const CT=[["ts","App text size","rng",50,100],["hf","Headings","sel",[["same","Same"]]],["theme","Theme","sel",[["auto","Auto"],["light","Light"],["dark","Dark"]]],["view","Layout","sel",[["grid","Grid"],["list","List"]]],["sort","Sort by","sel",[["manual","Custom"],["recent","Newest"],["popular","Most used"],["az","A–Z"]]],["cols","Columns","sel",[[0,"Auto"],[2,2],[3,3],[4,4],[5,5],[6,6],[8,8]]],["tile","Icon size","rng",44,96],["gap","Spacing","rng",8,40],["rad","Corners","rng",0,50],["fs","Text size","rng",10,18],["lines","Text lines","sel",[[0,"Hidden"],[1,"1 line"],[2,"2 lines"],[3,"3 lines"]]],["ff","Font","sel",[[1,"Apple system"],[0,"Bricolage"],[2,"Serif"],[3,"Mono"]]],["host","Website under name","sel",[[0,"Hidden"],[1,"Shown"]]],["open","Open links","sel",[["new","New tab"],["same","Same tab"]]],["start","Open on","sel",[["first","First tab"],["last","Last used tab"]]]];
+const CT=[["ts","App text size","rng",50,100],["hf","Headings","sel",[["same","Same"]]],["theme","Theme","sel",[["auto","Auto"],["light","Light"],["dark","Dark"]]],["view","Layout","sel",[["grid","Grid"],["cards","Cards"],["list","List"]]],["sort","Sort by","sel",[["manual","Custom"],["recent","Newest"],["popular","Most used"],["az","A–Z"]]],["cols","Columns","sel",[[0,"Auto"],[2,2],[3,3],[4,4],[5,5],[6,6],[8,8]]],["tile","Icon size","rng",44,96],["gap","Spacing","rng",8,40],["rad","Corners","rng",0,50],["fs","Text size","rng",10,18],["lines","Text lines","sel",[[0,"Hidden"],[1,"1 line"],[2,"2 lines"],[3,"3 lines"]]],["ff","Font","sel",[[1,"Apple system"],[0,"Bricolage"],[2,"Serif"],[3,"Mono"]]],["host","Website under name","sel",[[0,"Hidden"],[1,"Shown"]]],["open","Open links","sel",[["new","New tab"],["same","Same tab"]]],["start","Open on","sel",[["first","First tab"],["last","Last used tab"]]]];
 function settingsUI(){const DF={theme:"auto",view:"grid",sort:"manual"};for(const[k]of CT){const v=k==="ac"?(cfg.ac||(dk()?"#0a84ff":"#007aff")):(k in D?gv(k):(cfg[k]??DF[k]));$("#c-"+k).value=v;const o=$("#v-"+k);if(o)o.textContent=v+(k==="ts"?"%":"")}quickUI()}
 for(const[k]of CT)$("#c-"+k).oninput=e=>{const v=e.target.value;cfg[k]=typeof D[k]==="number"?+v:v;if(k==="theme"||k==="mood"||k==="ac")theme();applyGrid();if(k==="view"||k==="sort"||k==="open")draw();settingsUI();saveCfg()};
 const AK=["preset","accent","bg","surface","density","depth","shape","ictone","width","fab","heads","dark","lw","pin","ring","rw","hdr","bar","lst","txt","txc"];
