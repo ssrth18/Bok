@@ -3329,9 +3329,10 @@ sync();theme();
 (()=>{
 const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
 (function grab(){try{const p=new URLSearchParams(location.search);if(!["url","text","title","save"].some(k=>p.has(k)))return;ls.lp_inbox=JSON.stringify({u:p.get("url")||"",t:p.get("text")||p.get("save")||"",n:p.get("title")||""});history.replaceState(null,"",location.pathname+location.hash)}catch{}})();
+const cleanU=u=>{try{const x=new URL(u);["igsh","igshid","si","feature","fbclid","gclid","utm_source","utm_medium","utm_campaign","utm_content","utm_term"].forEach(k=>x.searchParams.delete(k));if(/(^|\.)(x|twitter)\.com$/.test(x.hostname)){x.searchParams.delete("s");x.searchParams.delete("t")}return x.href}catch{return u}};
 async function quick(raw,text,title){
  let note=(text||"").trim(),title0=(title||"").trim();const m=(raw||"").trim()||(note.match(/https?:\/\/\S+/)||[""])[0];let url="";
- if(m){try{url=norm(m.replace(/[.,;:!?)\]]+$/,""))}catch{}}
+ if(m){try{url=cleanU(norm(m.replace(/[.,;:!?)\]]+$/,"")))}catch{}}
  if(url){note=note.replace(m,"").trim();if(note===title0)note=""}
  else{if(!note&&!title0)return false;url="note:"+uid()+"|📝";if(!title0){title0=note.split("\n")[0].slice(0,60);if(note===title0)note=""}}
  const b={url,title:(title0||host(url)).slice(0,120)};if(note)b.note=note.slice(0,5000);
@@ -3342,6 +3343,13 @@ window.drainInbox=async()=>{let o=null;try{o=JSON.parse(ls.lp_inbox||"null")}cat
 window.shareIt=async(title,url,text)=>{const d={title};if(url)d.url=url;if(text)d.text=text;try{if(navigator.share){await navigator.share(d);return}}catch(e){if(e&&e.name==="AbortError")return}copyText(url||text||title,url?"Link copied":"Copied")};
 addEventListener("paste",e=>{const t=e.target;if((t.closest&&t.closest("input,textarea"))||document.querySelector("dialog[open]"))return;const x=(e.clipboardData&&e.clipboardData.getData("text"))||"";if(!x.trim())return;e.preventDefault();if(C.url.startsWith("YOUR_"))return;if(!S)return openSync();quick("",x,"")});
 $("#wpaste").onclick=async()=>{try{const t=(await navigator.clipboard.readText()).trim();if(!t)return toast("Clipboard is empty");if(/^https?:\/\/\S+$/i.test(t))$("#wu").value=t;else{$("#wn").value=t;if(!$("#wt").value)$("#wt").value=t.split("\n")[0].slice(0,60)}$("#wu").dispatchEvent(new Event("input"))}catch{toast("Allow clipboard access, or paste into the box")}};
+/* copied-link banner: Share > Copy, then open Little Space and tap Save */
+const cb=document.createElement("div");cb.hidden=true;cb.style.cssText="position:fixed;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:6px;max-width:calc(100vw - 24px);padding:8px 8px 8px 16px;border-radius:99px;background:var(--sf);color:var(--tx);box-shadow:0 0 0 1px var(--bd),0 12px 32px rgba(0,0,0,.25);font-size:14px;font-weight:600;white-space:nowrap";
+cb.innerHTML='<span style="overflow:hidden;text-overflow:ellipsis;max-width:46vw"></span><button type="button" data-s style="padding:9px 14px;border-radius:99px;background:var(--ac);color:var(--on)">Save</button><button type="button" data-x aria-label="Dismiss" style="padding:9px 12px;color:var(--mu)">×</button>';document.body.appendChild(cb);
+let cur="";
+async function peek(){if(document.hidden||!S||C.url.startsWith("YOUR_")||document.querySelector("dialog[open]"))return;let t="";try{t=(await navigator.clipboard.readText()).trim()}catch{return}const m=t.match(/https?:\/\/\S+/);if(!m||t===ls.lp_seen)return;cur=t;cb.firstChild.textContent="Save copied link · "+host(m[0]);cb.style.bottom=document.body.dataset.bar==="bottom"?"calc(var(--barh,110px) + 14px)":"calc(24px + env(safe-area-inset-bottom))";cb.hidden=false}
+cb.onclick=e=>{if(e.target.closest("[data-s]")){ls.lp_seen=cur;cb.hidden=true;quick("",cur,"")}else if(e.target.closest("[data-x]")){ls.lp_seen=cur;cb.hidden=true}};
+addEventListener("focus",()=>setTimeout(peek,350));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(peek,350)});setTimeout(peek,1500);
 if(S&&loaded&&ls.lp_inbox&&!C.url.startsWith("YOUR_"))setTimeout(()=>{if(window.drainInbox&&ls.lp_inbox)loadW()},900);
 })();
 </script>
