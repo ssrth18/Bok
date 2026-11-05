@@ -1551,6 +1551,22 @@ main.sw{animation-duration:.26s!important}
 .wl.selecting .wrow.sel{border-color:var(--ac)!important}
 dialog[open]{animation-duration:.2s}
 .card:active .ic{transition-duration:.08s}
+
+/* ---- Shared item: choose where it goes ---- */
+body{--shb:calc(84px + env(safe-area-inset-bottom))}
+body[data-bar=bottom]{--shb:calc(var(--barh,130px) + 64px)}
+#shp{position:fixed;left:0;right:0;margin:0 auto;width:min(calc(100vw - 24px),420px);bottom:var(--shb);z-index:55;padding:12px;border-radius:22px;background:color-mix(in srgb,var(--sf) 94%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 0 0 1px var(--bd),0 14px 34px rgba(0,0,0,.25);display:grid;gap:10px;animation:mpop .35s var(--sp)}
+#shp[hidden]{display:none}
+#shp .shl{display:flex;align-items:center;gap:8px;min-width:0;padding:0 4px}
+#shp .shl b{flex:none;font-size:calc(11px*var(--ts,1));font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ac)}
+#shp .shl span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(14px*var(--ts,1));font-weight:600}
+#shp .shr{display:flex;gap:8px}
+#shp button{min-height:44px;border-radius:14px;padding:0 14px;background:var(--fill);color:var(--tx);font-weight:650;font-size:calc(14px*var(--ts,1));white-space:nowrap}
+#shp button:active{background:var(--fill2)}
+#shp button:disabled{opacity:.6}
+#shp .go{flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2));color:var(--on)}
+#shp .x{width:44px;padding:0;color:var(--mu);font-size:20px}
+body.hasshp>.toast{bottom:calc(var(--shb) + 130px)}
 </style>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 </head>
@@ -1940,7 +1956,7 @@ const ago=t=>{const d=(Date.now()-new Date(t))/864e5;return d<1?"today":d<2?"yes
 function modesUI(){$("#modes").dataset.m=mode;document.querySelectorAll("#modes [data-mode]").forEach(b=>{const on=b.dataset.mode===mode;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)});const c=W.filter(w=>!w.done).length;$("#wc").textContent=c||"";const w=mode==="watch";$("#q").placeholder=w?"Search saved":"Search bookmarks";$("#q").setAttribute("aria-label",w?"Search saved":"Search bookmarks");$("#add").setAttribute("aria-label",w?"Add to Saved":"Add bookmark")}
 function setMode(m){if(m===mode)return;if(sel)selMode(false);mode=m;try{ls.lp_mode=m}catch{}$("#q").value="";swDir=m==="watch"?1:-1;anim=true;draw();scrollTo(0,0)}
 $("#modes").onclick=e=>{const b=e.target.closest("[data-mode]");if(b)setMode(b.dataset.mode)};
-async function loadW(manual){try{W=await db("lp_watchlist?select=*&order=created_at.desc");wErr=""}catch(e){wErr=missingW(e)?"setup":(navigator.onLine?e.message:"")}wBusy=false;cache();if(manual&&!wErr)toast("Saved list loaded");mode==="watch"?draw():modesUI();if(!wErr&&window.drainInbox)drainInbox()}
+async function loadW(manual){try{W=await db("lp_watchlist?select=*&order=created_at.desc");wErr=""}catch(e){wErr=missingW(e)?"setup":(navigator.onLine?e.message:"")}wBusy=false;cache();if(manual&&!wErr)toast("Saved list loaded");mode==="watch"?draw():modesUI();if(window.drainInbox)drainInbox()}
 function wOrd(){const ids=new Set(W.map(w=>w.id)),k=(cfg.word||[]).filter(id=>ids.has(id)),ks=new Set(k),fresh=W.filter(w=>!ks.has(w.id)).sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(w=>w.id);return[...fresh,...k]}
 function wMove(id,d){const v=wvis().map(w=>w.id),i=v.indexOf(id);if(i<0)return;const j=d==="top"?0:i+d;if(j<0||j>=v.length||j===i)return;const t=v[j],o=wOrd();o.splice(o.indexOf(id),1);const b=o.indexOf(t);o.splice(d==="top"||d<0?b:b+1,0,id);cfg.word=o;saveCfg();draw();toast(d==="top"?"Moved to top":d<0?"Moved up":"Moved down")}
 function wvis(){const ix=new Map(wOrd().map((id,i)=>[id,i])),q=$("#q").value.trim().toLowerCase();return W.filter(w=>(wf==="all"||(wf==="todo"?!w.done:w.done))&&(!q||[w.title,isNote(w.url)?"":w.url,w.note,w.why,w.benefit].some(x=>(x||"").toLowerCase().includes(q)))).sort((a,b)=>(a.done-b.done)||(ix.get(a.id)-ix.get(b.id)))}
@@ -3346,7 +3362,30 @@ async function quick(raw,text,title){
  try{const r=await db("lp_watchlist?on_conflict=user_id,url",{m:"POST",b,p:"resolution=merge-duplicates,return=representation"});
   if(r&&r[0])W=[r[0],...W.filter(x=>x.id!==r[0].id)];wErr="";cache();if(mode!=="watch")setMode("watch");else draw();toast(url.startsWith("note:")?"Note saved":"Link saved");return true}
  catch(er){toast(missingW(er)?WMSG:er.message);return false}}
-window.drainInbox=async()=>{let o=null;try{o=JSON.parse(ls.lp_inbox||"null")}catch{}if(!o||!S)return;delete ls.lp_inbox;const ok=await quick(o.u,o.t,o.n),lk=o.u||(o.t.match(/https?:\/\/\S+/)||[""])[0];if(ok&&lk)bar("Saved ✓",[["Bookmark too",()=>quickBook(o.u,o.t,o.n),1]])};
+/* Shared items wait here until you choose where they go. The current tab is the target. */
+const shp=document.createElement("div");shp.id="shp";shp.hidden=true;document.body.appendChild(shp);
+let shBusy=false;
+const pendGet=()=>{try{return JSON.parse(ls.lp_inbox||"null")}catch{return null}};
+const pendLink=o=>{const m=((o.u||"").trim())||((o.t||"").match(/https?:\/\/\S+/)||[""])[0];if(!m)return"";try{return norm(m.replace(/[.,;:!?)\]]+$/,""))}catch{return""}};
+function shpHide(){shp.hidden=true;document.body.classList.remove("hasshp")}
+function shpRender(){const o=pendGet();if(!o||!S||C.url.startsWith("YOUR_")){shpHide();return}
+ const lk=pendLink(o),inW=mode==="watch",name=lk?host(lk):((o.n||o.t||"Note").trim().split("\n")[0].slice(0,50));
+ shp.innerHTML='<div class="shl"><b></b><span></span></div><div class="shr"><button type="button" class="go" data-a="go"></button>'+(lk?'<button type="button" data-a="alt"></button>':"")+'<button type="button" class="x" data-a="no" aria-label="Dismiss">×</button></div>';
+ shp.querySelector("b").textContent=lk?"Shared link":"Shared note";shp.querySelector("span").textContent=name;
+ shp.querySelector(".go").textContent=shBusy?"Saving…":lk?(inW?"Save to Saved":"Save to Bookmarks"):(inW?"Save note":"Save note to Saved");
+ const al=shp.querySelector("[data-a=alt]");if(al)al.textContent=inW?"Bookmarks instead":"Saved instead";
+ shp.querySelectorAll("button").forEach(b=>b.disabled=shBusy);
+ shp.hidden=false;document.body.classList.add("hasshp")}
+shp.onclick=async e=>{const b=e.target.closest("button"),a=b&&b.dataset.a;if(!a||shBusy)return;
+ if(a==="no"){delete ls.lp_inbox;shpHide();return}
+ const o=pendGet();if(!o){shpHide();return}
+ const lk=pendLink(o),toW=!lk||(a==="go"?mode==="watch":mode!=="watch");
+ shBusy=true;shpRender();
+ let ok=false;try{ok=toW?await quick(o.u,o.t,o.n):await quickBook(o.u,o.t,o.n)}catch{}
+ shBusy=false;
+ if(ok){delete ls.lp_inbox;shpHide()}else shpRender()};
+new MutationObserver(shpRender).observe(document.getElementById("modes"),{attributes:true,attributeFilter:["data-m"]});
+window.drainInbox=()=>{const o=pendGet();if(o&&!pendLink(o)&&!((o.t||"")+(o.n||"")).trim())delete ls.lp_inbox;shpRender()};
 window.shareIt=async(title,url,text)=>{const d={title};if(url)d.url=url;if(text)d.text=text;try{if(navigator.share){await navigator.share(d);return}}catch(e){if(e&&e.name==="AbortError")return}copyText(url||text||title,url?"Link copied":"Copied")};
 addEventListener("paste",e=>{const t=e.target;if((t.closest&&t.closest("input,textarea"))||document.querySelector("dialog[open]"))return;const x=(e.clipboardData&&e.clipboardData.getData("text"))||"";if(!x.trim())return;e.preventDefault();if(C.url.startsWith("YOUR_"))return;if(!S)return openSync();quick("",x,"")});
 $("#wpaste").onclick=async()=>{try{const t=(await navigator.clipboard.readText()).trim();if(!t)return toast("Clipboard is empty");const mm=t.match(/https?:\/\/\S+/);if(mm){$("#wu").value=mm[0];const r=t.replace(mm[0],"").trim().replace(/^["“”]+|["“”]+$/g,"").trim();if(r)$("#wn").value=r}else{$("#wn").value=t;if(!$("#wt").value)$("#wt").value=t.split("\n")[0].slice(0,60)}$("#wu").dispatchEvent(new Event("input"))}catch{toast("Allow clipboard access, or paste into the box")}};
@@ -3373,9 +3412,9 @@ function bar(label,opts,sn){seen=sn||"";act=opts;
  cb.firstChild.textContent=label;cb.style.bottom=document.body.dataset.bar==="bottom"?"calc(var(--barh,110px) + 14px)":"calc(24px + env(safe-area-inset-bottom))";cb.hidden=false;clearTimeout(bt);bt=setTimeout(()=>{cb.hidden=true},12000)}
 cb.onclick=e=>{const b=e.target.closest("button");if(!b)return;cb.hidden=true;if(seen)ls.lp_seen=seen;if(b.dataset.i!==undefined)act[b.dataset.i][1]()};
 window.lpBar=bar;
-async function peek(){if(document.hidden||!S||C.url.startsWith("YOUR_")||document.querySelector("dialog[open]"))return;let t="";try{t=(await navigator.clipboard.readText()).trim()}catch{return}const m=t.match(/https?:\/\/\S+/);if(!m||t===ls.lp_seen)return;bar("Copied · "+host(m[0]),[["Saved",()=>quick("",t,""),1],["Bookmark",()=>quickBook("",t,"")]],t)}
+async function peek(){if(document.hidden||!S||ls.lp_inbox||C.url.startsWith("YOUR_")||document.querySelector("dialog[open]"))return;let t="";try{t=(await navigator.clipboard.readText()).trim()}catch{return}const m=t.match(/https?:\/\/\S+/);if(!m||t===ls.lp_seen)return;bar("Copied · "+host(m[0]),[["Saved",()=>quick("",t,""),1],["Bookmark",()=>quickBook("",t,"")]],t)}
 addEventListener("focus",()=>setTimeout(peek,350));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(peek,350)});setTimeout(peek,1500);
-if(S&&loaded&&ls.lp_inbox&&!C.url.startsWith("YOUR_"))setTimeout(()=>{if(window.drainInbox&&ls.lp_inbox)loadW()},900);
+window.drainInbox();
 })();
 </script>
 </body>
