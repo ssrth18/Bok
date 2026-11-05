@@ -1553,7 +1553,7 @@ dialog[open]{animation-duration:.2s}
 .card:active .ic{transition-duration:.08s}
 
 /* ---- Shared item pill ---- */
-body{--shb:calc(84px + env(safe-area-inset-bottom))}
+body{--shb:calc(150px + env(safe-area-inset-bottom))}
 body[data-bar=bottom]{--shb:calc(var(--barh,130px) + 64px)}
 #shp{--tile:40px;position:fixed;left:0;right:0;margin:0 auto;width:min(calc(100vw - 24px),420px);bottom:var(--shb);z-index:55;padding:12px;border-radius:24px;background:color-mix(in srgb,var(--sf) 96%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--bd);box-shadow:0 16px 40px -8px rgba(0,0,0,.3),0 2px 6px rgba(0,0,0,.08);display:grid;gap:12px;animation:shpIn .38s var(--sp)}
 @keyframes shpIn{from{opacity:0;transform:translateY(18px) scale(.97)}}
@@ -1569,11 +1569,13 @@ body[data-bar=bottom]{--shb:calc(var(--barh,130px) + 64px)}
 #shp .x svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 #shp .shr{display:flex;gap:8px}
 #shp .shr button{min-height:46px;border-radius:15px;padding:0 12px;font-weight:650;font-size:calc(14px*var(--ts,1));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#shp .go{flex:1.25;background:linear-gradient(135deg,var(--ac),var(--ac2));color:var(--on);box-shadow:0 6px 14px -4px color-mix(in srgb,var(--ac) 45%,transparent)}
+#shp .go{flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2));color:var(--on);box-shadow:0 6px 14px -4px color-mix(in srgb,var(--ac) 45%,transparent)}
 #shp .alt{flex:1;background:var(--fill);color:var(--tx)}
 #shp button{transition:transform .3s var(--sp)}
 #shp button:active{transform:scale(.97)}
 #shp button:disabled{opacity:.6}
+body.browsing #shp,body:has(#sb:not([hidden])) #shp{display:none}
+body.hasshp{padding-bottom:calc(var(--shb) + 160px)}
 body.hasshp>.toast{bottom:calc(var(--shb) + 150px)}
 </style>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -3371,7 +3373,7 @@ async function quick(raw,text,title){
   if(r&&r[0])W=[r[0],...W.filter(x=>x.id!==r[0].id)];wErr="";cache();if(mode!=="watch")setMode("watch");else draw();toast(url.startsWith("note:")?"Note saved":"Link saved");return true}
  catch(er){toast(missingW(er)?WMSG:er.message);return false}}
 /* Shared items (and a freshly copied link) wait here until you choose where they go. The current tab is the target. */
-const shp=document.createElement("div");shp.id="shp";shp.hidden=true;document.body.appendChild(shp);
+const shp=document.createElement("div");shp.id="shp";shp.hidden=true;shp.setAttribute("role","group");shp.setAttribute("aria-label","Shared item");shp.setAttribute("aria-live","polite");document.body.appendChild(shp);
 let shBusy=false,clip=null,clipT=0;
 const inboxGet=()=>{try{return JSON.parse(ls.lp_inbox||"null")}catch{return null}};
 const pendGet=()=>inboxGet()||clip;
@@ -3382,24 +3384,31 @@ function shpHide(){shp.hidden=true;shp.dataset.k="";clearTimeout(clipT);document
 function shpRender(){const o=pendGet();if(!o||!S||C.url.startsWith("YOUR_")){shpHide();return}
  const lk=pendLink(o),inW=mode==="watch",k=(o.u||"")+"|"+(o.t||"")+"|"+(o.n||"");
  if(shp.dataset.k!==k){shp.dataset.k=k;const nm=pendName(o,lk),fromClip=!inboxGet();
-  shp.innerHTML='<div class="shh"><span class="shi"></span><div class="sht"><b></b><span></span></div><button type="button" class="x" data-a="no" aria-label="Dismiss"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div><div class="shr"><button type="button" class="go" data-a="go"></button>'+(lk?'<button type="button" class="alt" data-a="alt"></button>':"")+'</div>';
+  shp.innerHTML='<div class="shh"><span class="shi"></span><div class="sht"><b></b><span></span></div><button type="button" class="x" data-a="no" aria-label="Dismiss"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div><div class="shr">'+(lk?'<button type="button" data-a="books"></button>':"")+'<button type="button" data-a="watch"></button></div>';
   shp.querySelector(".shi").innerHTML=icon(lk?{url:lk,title:nm}:{url:"",title:nm,emoji:"📝"});
   shp.querySelector(".sht b").textContent=fromClip?(lk?"Copied link":"Copied text"):(lk?"Shared link":"Shared note");
   shp.querySelector(".sht span").textContent=nm}
- shp.querySelector(".go").textContent=shBusy?"Saving…":lk?(inW?"Save to Saved":"Save to Bookmarks"):(inW?"Save note":"Save note to Saved");
- const al=shp.querySelector(".alt");if(al)al.textContent=inW?"Bookmarks instead":"Saved instead";
- shp.querySelectorAll("button").forEach(x=>x.disabled=shBusy);
+ const cur=inW?"watch":"books";
+ shp.querySelectorAll(".shr button").forEach(x=>{const t=x.dataset.a,on=!lk||t===cur;x.classList.toggle("go",on);x.classList.toggle("alt",!on);x.textContent=shBusy===t?"Saving…":t==="books"?"Bookmark":lk?"Saved":"Save note"});
+ shp.querySelectorAll("button").forEach(x=>x.disabled=!!shBusy);
  shp.hidden=false;document.body.classList.add("hasshp")}
 shp.onclick=async e=>{const b=e.target.closest("button"),a=b&&b.dataset.a;if(!a||shBusy)return;
  const o=pendGet(),fromInbox=!!inboxGet();if(!o){shpHide();return}
  const done=()=>{if(fromInbox)delete ls.lp_inbox;else clip=null;shpHide()};
  if(a==="no"){done();return}
- const lk=pendLink(o),toW=!lk||(a==="go"?mode==="watch":mode!=="watch");
- shBusy=true;shpRender();
+ const lk=pendLink(o),toW=!lk||a==="watch",cu=lk&&cleanU(lk);
+ if(cu&&(toW?W:B).some(x=>x.url===cu)){toast(toW?"Already in Saved":"Already in Bookmarks");done();return}
+ shBusy=a;shpRender();
  let ok=false;try{ok=toW?await quick(o.u,o.t,o.n):await quickBook(o.u,o.t,o.n)}catch{}
  shBusy=false;
  if(ok)done();else shpRender()};
 new MutationObserver(shpRender).observe(document.getElementById("modes"),{attributes:true,attributeFilter:["data-m"]});
+/* swipe down to dismiss */
+{let y0=null,dy=0;
+ shp.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;dy=0;shp.style.transition="none"},{passive:true});
+ shp.addEventListener("touchmove",e=>{if(y0===null)return;dy=Math.max(0,e.touches[0].clientY-y0);shp.style.transform="translateY("+dy+"px)";shp.style.opacity=String(1-Math.min(.6,dy/260))},{passive:true});
+ const end=()=>{if(y0===null)return;y0=null;const d=dy;shp.style.transition="";shp.style.transform="";shp.style.opacity="";if(d>70&&!shBusy){const x=shp.querySelector(".x");x&&x.click()}};
+ shp.addEventListener("touchend",end);shp.addEventListener("touchcancel",end)}
 /* a copied link: offered once, skipped if it is already saved */
 function showClip(t){ls.lp_seen=t;const lk=pendLink({u:"",t});if(!lk||inboxGet())return;
  const cu=cleanU(lk);if(W.some(w=>w.url===cu)||B.some(x=>x.url===cu))return;
@@ -3420,7 +3429,7 @@ async function quickBook(raw,text,title){
  let t=(title||"").trim(),ic=null;const y=youtubeInfo(url),xp=xPostId(url);
  try{if(y){ic="https://i.ytimg.com/vi/"+y.id+"/hqdefault.jpg";if(!t){const j=await(await fetch("https://noembed.com/embed?url="+encodeURIComponent(url))).json();t=j.title||""}}
   else if(xp){const p=await fetchXPostC(xp);ic=p.avatar||null;if(!t)t=(p.name+": "+p.text).replace(/\s+/g," ").slice(0,70)}}catch{}
- try{const r=await db("lp_bookmarks?on_conflict=user_id,url",{m:"POST",b:{url,title:(t||host(url)).slice(0,80),tags:[],pinned:false,icon_url:ic,emoji:null,position:B.length?Math.min(...B.map(z=>z.position||0))-1:0},p:"resolution=merge-duplicates,return=representation"});
+ try{const r=await db("lp_bookmarks?on_conflict=user_id,url",{m:"POST",b:{url,title:(t||host(url)).slice(0,80),tags:isC(tag)?[tag]:[],pinned:false,icon_url:ic,emoji:null,position:B.length?Math.min(...B.map(z=>z.position||0))-1:0},p:"resolution=merge-duplicates,return=representation"});
   if(r&&r[0])B=[r[0],...B.filter(z=>z.id!==r[0].id)];cache();if(mode!=="books")setMode("books");else draw();toast("Bookmarked");return true}
  catch(er){toast(er.message);return false}}
 /* choice bar */
