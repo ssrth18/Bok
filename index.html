@@ -1552,21 +1552,29 @@ main.sw{animation-duration:.26s!important}
 dialog[open]{animation-duration:.2s}
 .card:active .ic{transition-duration:.08s}
 
-/* ---- Shared item: choose where it goes ---- */
+/* ---- Shared item pill ---- */
 body{--shb:calc(84px + env(safe-area-inset-bottom))}
 body[data-bar=bottom]{--shb:calc(var(--barh,130px) + 64px)}
-#shp{position:fixed;left:0;right:0;margin:0 auto;width:min(calc(100vw - 24px),420px);bottom:var(--shb);z-index:55;padding:12px;border-radius:22px;background:color-mix(in srgb,var(--sf) 94%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 0 0 1px var(--bd),0 14px 34px rgba(0,0,0,.25);display:grid;gap:10px;animation:mpop .35s var(--sp)}
+#shp{--tile:40px;position:fixed;left:0;right:0;margin:0 auto;width:min(calc(100vw - 24px),420px);bottom:var(--shb);z-index:55;padding:12px;border-radius:24px;background:color-mix(in srgb,var(--sf) 96%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--bd);box-shadow:0 16px 40px -8px rgba(0,0,0,.3),0 2px 6px rgba(0,0,0,.08);display:grid;gap:12px;animation:shpIn .38s var(--sp)}
+@keyframes shpIn{from{opacity:0;transform:translateY(18px) scale(.97)}}
 #shp[hidden]{display:none}
-#shp .shl{display:flex;align-items:center;gap:8px;min-width:0;padding:0 4px}
-#shp .shl b{flex:none;font-size:calc(11px*var(--ts,1));font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ac)}
-#shp .shl span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(14px*var(--ts,1));font-weight:600}
+#shp .shh{display:flex;align-items:center;gap:12px;min-width:0}
+#shp .shi{flex:none;display:block;padding:2px}
+#shp .shi .ic{width:40px;height:40px;aspect-ratio:auto;margin:0;border-radius:12px}
+#shp .sht{flex:1;min-width:0;display:grid;gap:2px}
+#shp .sht b{font-size:calc(10.5px*var(--ts,1));font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+#shp .sht span{font-size:calc(15px*var(--ts,1));font-weight:650;letter-spacing:-.01em;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+#shp .x{position:relative;flex:none;width:32px;height:32px;border-radius:50%;background:var(--fill);color:var(--mu);display:grid;place-items:center;padding:0}
+#shp .x::before{content:"";position:absolute;inset:-6px}
+#shp .x svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 #shp .shr{display:flex;gap:8px}
-#shp button{min-height:44px;border-radius:14px;padding:0 14px;background:var(--fill);color:var(--tx);font-weight:650;font-size:calc(14px*var(--ts,1));white-space:nowrap}
-#shp button:active{background:var(--fill2)}
+#shp .shr button{min-height:46px;border-radius:15px;padding:0 12px;font-weight:650;font-size:calc(14px*var(--ts,1));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#shp .go{flex:1.25;background:linear-gradient(135deg,var(--ac),var(--ac2));color:var(--on);box-shadow:0 6px 14px -4px color-mix(in srgb,var(--ac) 45%,transparent)}
+#shp .alt{flex:1;background:var(--fill);color:var(--tx)}
+#shp button{transition:transform .3s var(--sp)}
+#shp button:active{transform:scale(.97)}
 #shp button:disabled{opacity:.6}
-#shp .go{flex:1;background:linear-gradient(135deg,var(--ac),var(--ac2));color:var(--on)}
-#shp .x{width:44px;padding:0;color:var(--mu);font-size:20px}
-body.hasshp>.toast{bottom:calc(var(--shb) + 130px)}
+body.hasshp>.toast{bottom:calc(var(--shb) + 150px)}
 </style>
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 </head>
@@ -3362,30 +3370,41 @@ async function quick(raw,text,title){
  try{const r=await db("lp_watchlist?on_conflict=user_id,url",{m:"POST",b,p:"resolution=merge-duplicates,return=representation"});
   if(r&&r[0])W=[r[0],...W.filter(x=>x.id!==r[0].id)];wErr="";cache();if(mode!=="watch")setMode("watch");else draw();toast(url.startsWith("note:")?"Note saved":"Link saved");return true}
  catch(er){toast(missingW(er)?WMSG:er.message);return false}}
-/* Shared items wait here until you choose where they go. The current tab is the target. */
+/* Shared items (and a freshly copied link) wait here until you choose where they go. The current tab is the target. */
 const shp=document.createElement("div");shp.id="shp";shp.hidden=true;document.body.appendChild(shp);
-let shBusy=false;
-const pendGet=()=>{try{return JSON.parse(ls.lp_inbox||"null")}catch{return null}};
+let shBusy=false,clip=null,clipT=0;
+const inboxGet=()=>{try{return JSON.parse(ls.lp_inbox||"null")}catch{return null}};
+const pendGet=()=>inboxGet()||clip;
 const pendLink=o=>{const m=((o.u||"").trim())||((o.t||"").match(/https?:\/\/\S+/)||[""])[0];if(!m)return"";try{return norm(m.replace(/[.,;:!?)\]]+$/,""))}catch{return""}};
-function shpHide(){shp.hidden=true;document.body.classList.remove("hasshp")}
+const pendName=(o,lk)=>{const st=x=>(x||"").replace(/https?:\/\/\S+/g,"").replace(/\s+/g," ").trim(),t=st(o.n)||st(o.t);if(t)return t.slice(0,90);
+ if(lk){try{const u=new URL(lk),p=(u.pathname+u.search).replace(/^\/$/,"");return(host(lk)+p).slice(0,60)}catch{return host(lk)}}return"Note"};
+function shpHide(){shp.hidden=true;shp.dataset.k="";clearTimeout(clipT);document.body.classList.remove("hasshp")}
 function shpRender(){const o=pendGet();if(!o||!S||C.url.startsWith("YOUR_")){shpHide();return}
- const lk=pendLink(o),inW=mode==="watch",name=lk?host(lk):((o.n||o.t||"Note").trim().split("\n")[0].slice(0,50));
- shp.innerHTML='<div class="shl"><b></b><span></span></div><div class="shr"><button type="button" class="go" data-a="go"></button>'+(lk?'<button type="button" data-a="alt"></button>':"")+'<button type="button" class="x" data-a="no" aria-label="Dismiss">×</button></div>';
- shp.querySelector("b").textContent=lk?"Shared link":"Shared note";shp.querySelector("span").textContent=name;
+ const lk=pendLink(o),inW=mode==="watch",k=(o.u||"")+"|"+(o.t||"")+"|"+(o.n||"");
+ if(shp.dataset.k!==k){shp.dataset.k=k;const nm=pendName(o,lk),fromClip=!inboxGet();
+  shp.innerHTML='<div class="shh"><span class="shi"></span><div class="sht"><b></b><span></span></div><button type="button" class="x" data-a="no" aria-label="Dismiss"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg></button></div><div class="shr"><button type="button" class="go" data-a="go"></button>'+(lk?'<button type="button" class="alt" data-a="alt"></button>':"")+'</div>';
+  shp.querySelector(".shi").innerHTML=icon(lk?{url:lk,title:nm}:{url:"",title:nm,emoji:"📝"});
+  shp.querySelector(".sht b").textContent=fromClip?(lk?"Copied link":"Copied text"):(lk?"Shared link":"Shared note");
+  shp.querySelector(".sht span").textContent=nm}
  shp.querySelector(".go").textContent=shBusy?"Saving…":lk?(inW?"Save to Saved":"Save to Bookmarks"):(inW?"Save note":"Save note to Saved");
- const al=shp.querySelector("[data-a=alt]");if(al)al.textContent=inW?"Bookmarks instead":"Saved instead";
- shp.querySelectorAll("button").forEach(b=>b.disabled=shBusy);
+ const al=shp.querySelector(".alt");if(al)al.textContent=inW?"Bookmarks instead":"Saved instead";
+ shp.querySelectorAll("button").forEach(x=>x.disabled=shBusy);
  shp.hidden=false;document.body.classList.add("hasshp")}
 shp.onclick=async e=>{const b=e.target.closest("button"),a=b&&b.dataset.a;if(!a||shBusy)return;
- if(a==="no"){delete ls.lp_inbox;shpHide();return}
- const o=pendGet();if(!o){shpHide();return}
+ const o=pendGet(),fromInbox=!!inboxGet();if(!o){shpHide();return}
+ const done=()=>{if(fromInbox)delete ls.lp_inbox;else clip=null;shpHide()};
+ if(a==="no"){done();return}
  const lk=pendLink(o),toW=!lk||(a==="go"?mode==="watch":mode!=="watch");
  shBusy=true;shpRender();
  let ok=false;try{ok=toW?await quick(o.u,o.t,o.n):await quickBook(o.u,o.t,o.n)}catch{}
  shBusy=false;
- if(ok){delete ls.lp_inbox;shpHide()}else shpRender()};
+ if(ok)done();else shpRender()};
 new MutationObserver(shpRender).observe(document.getElementById("modes"),{attributes:true,attributeFilter:["data-m"]});
-window.drainInbox=()=>{const o=pendGet();if(o&&!pendLink(o)&&!((o.t||"")+(o.n||"")).trim())delete ls.lp_inbox;shpRender()};
+/* a copied link: offered once, skipped if it is already saved */
+function showClip(t){ls.lp_seen=t;const lk=pendLink({u:"",t});if(!lk||inboxGet())return;
+ const cu=cleanU(lk);if(W.some(w=>w.url===cu)||B.some(x=>x.url===cu))return;
+ clip={u:"",t,n:""};shpRender();clearTimeout(clipT);clipT=setTimeout(()=>{if(clip&&clip.t===t&&!shBusy){clip=null;shpHide()}},15000)}
+window.drainInbox=()=>{const o=inboxGet();if(o&&!pendLink(o)&&!((o.t||"")+(o.n||"")).trim())delete ls.lp_inbox;shpRender()};
 window.shareIt=async(title,url,text)=>{const d={title};if(url)d.url=url;if(text)d.text=text;try{if(navigator.share){await navigator.share(d);return}}catch(e){if(e&&e.name==="AbortError")return}copyText(url||text||title,url?"Link copied":"Copied")};
 addEventListener("paste",e=>{const t=e.target;if((t.closest&&t.closest("input,textarea"))||document.querySelector("dialog[open]"))return;const x=(e.clipboardData&&e.clipboardData.getData("text"))||"";if(!x.trim())return;e.preventDefault();if(C.url.startsWith("YOUR_"))return;if(!S)return openSync();quick("",x,"")});
 $("#wpaste").onclick=async()=>{try{const t=(await navigator.clipboard.readText()).trim();if(!t)return toast("Clipboard is empty");const mm=t.match(/https?:\/\/\S+/);if(mm){$("#wu").value=mm[0];const r=t.replace(mm[0],"").trim().replace(/^["“”]+|["“”]+$/g,"").trim();if(r)$("#wn").value=r}else{$("#wn").value=t;if(!$("#wt").value)$("#wt").value=t.split("\n")[0].slice(0,60)}$("#wu").dispatchEvent(new Event("input"))}catch{toast("Allow clipboard access, or paste into the box")}};
@@ -3412,7 +3431,7 @@ function bar(label,opts,sn){seen=sn||"";act=opts;
  cb.firstChild.textContent=label;cb.style.bottom=document.body.dataset.bar==="bottom"?"calc(var(--barh,110px) + 14px)":"calc(24px + env(safe-area-inset-bottom))";cb.hidden=false;clearTimeout(bt);bt=setTimeout(()=>{cb.hidden=true},12000)}
 cb.onclick=e=>{const b=e.target.closest("button");if(!b)return;cb.hidden=true;if(seen)ls.lp_seen=seen;if(b.dataset.i!==undefined)act[b.dataset.i][1]()};
 window.lpBar=bar;
-async function peek(){if(document.hidden||!S||ls.lp_inbox||C.url.startsWith("YOUR_")||document.querySelector("dialog[open]"))return;let t="";try{t=(await navigator.clipboard.readText()).trim()}catch{return}const m=t.match(/https?:\/\/\S+/);if(!m||t===ls.lp_seen)return;bar("Copied · "+host(m[0]),[["Saved",()=>quick("",t,""),1],["Bookmark",()=>quickBook("",t,"")]],t)}
+async function peek(){if(document.hidden||!S||ls.lp_inbox||C.url.startsWith("YOUR_")||document.querySelector("dialog[open]"))return;let t="";try{t=(await navigator.clipboard.readText()).trim()}catch{return}const m=t.match(/https?:\/\/\S+/);if(!m||t===ls.lp_seen)return;showClip(t)}
 addEventListener("focus",()=>setTimeout(peek,350));document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(peek,350)});setTimeout(peek,1500);
 window.drainInbox();
 })();
